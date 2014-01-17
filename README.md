@@ -1,4 +1,4 @@
-elementary OS install script for Chromebooks
+elementary OS setup script for Chromebooks
 ============================================
 
 This script will apply automatically all the necessary fixes to run elementary OS on Chromebooks.
