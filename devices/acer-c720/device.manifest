@@ -1,0 +1,13 @@
+#elementary OS manifest for the Acer C720 Chromebook
+
+#Kernel package(s) to install
+kernel_repository_packages=""
+kernel_local_packages=""
+
+#Device specific package(s) to install
+device_repository_packages=""
+device_local_packages=""
+
+#Additional repository(ies) and package(s) to install
+repository_packages=""
+additional_repository=""
