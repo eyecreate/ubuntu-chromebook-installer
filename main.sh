@@ -12,6 +12,7 @@ tmp_dir="$current_dir/tmp/"
 conf_dir="$current_dir/conf.d/"
 devices_dir="$current_dir/devices/"
 files_dir="$current_dir/files/"
+scripts_dir="$current_dir/scripts/"
 sys_files_dir="$files_dir/system/"
 user_files_dir="$files_dir/user/"
 
@@ -22,6 +23,7 @@ dev_manifest_file="device.manifest"
 #External depenencies variables 
 #ChrUbuntu configuration file
 chrubuntu_conf="$conf_dir/chrubuntu.conf"
+chrubuntu_script="$scripts_dir/chrubuntu.sh"
 if [ -e "$chrubuntu_conf" ]; then
 . $chrubuntu_conf
 fi
@@ -133,24 +135,21 @@ case "$device_model" in
 esac
 
 debug_msg "INFO" "ChromeeOS - elementary OS installation script for Chromebooks by Setsuna666 on github Setsuna666/elementaryos-chromebook"
-#Creating log directory byfore using the log_msg function
-run_command "mkdir $log_dir"
+#Creating log files directory before using the log_msg function
+mkdir $log_dir
 
 log_msg "INFO" "Device model is $device_model"
 log_msg "INFO" "Creating and downloading dependencies..."
 run_command "mkdir $tmp_dir"
 
-log_msg "INFO" "Downloading ChrUbuntu..."
-run_command "curl -o $tmp_dir/$chrubuntu_script -L -O $chrubuntu_script_url"
+if [ ! -z "$chrubuntu_web_dl" ]; then
+    chrubuntu_script="$tmp_dir/$chrubuntu_script"
+    log_msg "INFO" "Downloading ChrUbuntu..."
+    run_command "curl -o $tmp_dir/$chrubuntu_script -L -O $chrubuntu_web_dl"
+fi
 
-#if [ ! -e "$chrubuntu_runonce" ];then
-    log_msg "INFO" "Running ChrUbuntu..."
-    sudo bash $tmp_dir/$chrubuntu_script -m ubuntu-minimal -u lts
-    log_msg "INFO" "ChrUbuntu execution complete..."
-    #log_msg "INFO" "Creating ChrUbuntu run once file..."
-    #run_command "touch $chrubuntu_runonce"
-#else
-#    log_msg "WARNING" "ChrUbuntu has already been run once...skipping"
-#fi
+log_msg "INFO" "Running ChrUbuntu..."
+sudo bash $chrubuntu_script -m $chrubuntu_metapackage -u $chrubuntu_os_version
+log_msg "INFO" "ChrUbuntu execution complete..."
 
 
