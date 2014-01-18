@@ -1,14 +1,15 @@
 #!/bin/bash
-#elementary OS install script for Chromebooks
+#ChromeeOS - elementary OS install script for Chromebooks
 
 #Variables definition
 #Script variables
 current_dir="$(dirname $0)"
-log_dir="$current_dir/logs/"
-log_file="elementary-install.log"
 
 #Script global directory variables
+log_file="elementary-install.log"
+log_dir="$current_dir/logs/"
 tmp_dir="$current_dir/tmp/"
+conf_dir="$current_dir/conf.d/"
 devices_dir="$current_dir/devices/"
 files_dir="$current_dir/files/"
 sys_files_dir="$files_dir/system/"
@@ -19,16 +20,18 @@ device_manifest="none"
 dev_manifest_file="device.manifest"
 
 #External depenencies variables 
-chrubuntu_script_url="http://goo.gl/9sgchs"
-chrubuntu_script="9sgchs"
-chrubuntu_runonce="$tmp_dir/chrubuntu-runonce"
+#ChrUbuntu configuration file
+chrubuntu_conf="$conf_dir/chrubuntu.conf"
+if [ -e "$chrubuntu_conf" ]; then
+. $chrubuntu_conf
+fi
 
 #Functions definition
 usage(){
 cat << EOF
 usage: $0 -d [ DEVICE|ACTION ] [ OPTIONS ]
       
-ementary OS installation script for Chromebooks
+ChromeeOS - elmentary OS installation script for Chromebooks
 
     OPTIONS:
     -h      Show help
@@ -129,11 +132,12 @@ case "$device_model" in
         ;;
 esac
 
-debug_msg "INFO" "elementary OS installation script for Chromebooks by Setsuna666 on github Setsuna666/elementaryos-chromebook"
+debug_msg "INFO" "ChromeeOS - elementary OS installation script for Chromebooks by Setsuna666 on github Setsuna666/elementaryos-chromebook"
+#Creating log directory byfore using the log_msg function
+run_command "mkdir $log_dir"
 
 log_msg "INFO" "Device model is $device_model"
 log_msg "INFO" "Creating and downloading dependencies..."
-run_command "mkdir $log_dir"
 run_command "mkdir $tmp_dir"
 
 log_msg "INFO" "Downloading ChrUbuntu..."
