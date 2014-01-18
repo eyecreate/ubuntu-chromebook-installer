@@ -150,7 +150,7 @@ run_command "curl -o $tmp_dir/$chrubuntu_script -L -O $chrubuntu_script_url"
     #log_msg "INFO" "Creating ChrUbuntu run once file..."
     #run_command "touch $chrubuntu_runonce"
 #else
-    log_msg "WARNING" "ChrUbuntu has already been run once...skipping"
+#    log_msg "WARNING" "ChrUbuntu has already been run once...skipping"
 #fi
 
 
