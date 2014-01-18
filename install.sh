@@ -3,14 +3,18 @@
 
 #Variables definition
 #Script variables
-current_dir=$(dirname $0)
+current_dir="$(dirname $0)"
 log_dir="$current_dir/logs/"
 log_file="elementary-install.log"
+
+#Script global directory variables
 tmp_dir="$current_dir/tmp/"
 devices_dir="$current_dir/devices/"
 files_dir="$current_dir/files/"
 sys_files_dir="$files_dir/system/"
 user_files_dir="$files_dir/user/"
+
+#Device specific variables
 device_manifest="none"
 dev_manifest_file="device.manifest"
 
