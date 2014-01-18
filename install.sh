@@ -7,20 +7,33 @@ current_dir=$(dirname $0)
 log_dir="$current_dir/logs/"
 log_file="elementary-install.log"
 tmp_dir="$current_dir/tmp/"
+devices_dir="$current_dir/devices/"
+files_dir="$current_dir/files/"
+sys_files_dir="$files_dir/system/"
+user_files_dir="$files_dir/user/"
+device_manifest="none"
+dev_manifest_file="device.manifest"
 
 #External depenencies variables 
 chrubuntu_script_url="http://goo.gl/9sgchs"
 chrubuntu_script="9sgchs"
+chrubuntu_runonce="$tmp_dir/chrubuntu-runonce"
 
 #Functions definition
 usage(){
-    cat << EOF
-		usage: $0
+cat << EOF
+usage: $0 [DEVICE|ACTION] [OPTIONS]
+      
+ementary OS installation script for Chromebooks
 
-		elementary OS installation script for Chromebooks
+    OPTIONS:
+    -h      Show help
 
-		OPTIONS:
-		   -h      show help.
+    DEVICE:
+        The device manifest to load for your Chromebook
+
+    ACTION:
+        list    List all the elements for this specific options (ex: List all devices model supported"
 EOF
 }
 
@@ -71,6 +84,10 @@ run_command(){
 
 
 #Get command line arguments
+#Required arguments
+device_model="$1"
+
+#Optional arguments
 while getopts ":h" options; do
     case "${options}" in
         h)
@@ -84,8 +101,30 @@ while getopts ":h" options; do
     esac
 done
 
+#Validate device model
+case "$device_model" in
+    list) 
+        debug_msg "INFO" "List of supported devices..."
+        for i in $(cd $devices_dir; ls -d */); do echo "- ${i%%/}"; done
+        exit 0
+        ;;
+    *)
+        device_manifest="$devices_dir/$device_model/$dev_manifest_file"
+        if [ ! -e $device_manifest ];then
+            log_msg "WARNING" "Device '$device_model' does not exist...exiting"
+            usage
+            exit 1
+        elif [ "$device_model" == "" ]; then
+            log_msg "WARNING" "Device not specified...exiting"
+            usage
+            exit 1
+        fi
+        ;;
+esac
+
 debug_msg "INFO" "elementary OS installation script for Chromebooks by Setsuna666 on github Setsuna666/elementaryos-chromebook"
 
+log_msg "INFO" "Device model is $device_model"
 log_msg "INFO" "Creating and downloading dependencies..."
 run_command "mkdir $log_dir"
 run_command "mkdir $tmp_dir"
@@ -93,7 +132,14 @@ run_command "mkdir $tmp_dir"
 log_msg "INFO" "Downloading ChrUbuntu..."
 run_command "curl -o $tmp_dir/$chrubuntu_script -L -O $chrubuntu_script_url"
 
-log_msg "INFO" "Running ChrUbuntu..."
-run_command "sudo bash $tmp_dir/$chrubuntu_script -h" 
+if [ ! -e "$chrubuntu_runonce" ];then
+    log_msg "INFO" "Running ChrUbuntu..."
+    sudo bash $tmp_dir/$chrubuntu_script -h 
+    log_msg "INFO" "ChrUbuntu execution complete..."
+    log_msg "INFO" "Creating ChrUbuntu run once file..."
+    run_command "touch $chrubuntu_runonce"
+else
+    log_msg "WARNING" "ChrUbuntu has already been run once...skipping"
+fi
 
 
