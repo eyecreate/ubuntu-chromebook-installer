@@ -3,7 +3,7 @@
 
 #Variables definition
 #Script variables
-current_dir="$(dirname $0)"
+current_dir="$(dirname $BASH_SOURCE)"
 
 #Script global directory variables
 log_file="elementary-install.log"
@@ -71,7 +71,7 @@ debug_msg(){
 }
 
 log_msg(){
-    if [ -e "$log_dir/" ];then
+    if [ -e "$log_dir" ];then
         debug_level="$1"
         msg="$2"
         log_format="$(date +%Y-%m-%dT%H:%M:%S) $debug_level $msg"
@@ -123,11 +123,11 @@ case "$device_model" in
     *)
         device_manifest="$devices_dir/$device_model/$dev_manifest_file"
         if [ -z "$device_model" ]; then
-            log_msg "WARNING" "Device not specified...exiting"
+            debug_msg "WARNING" "Device not specified...exiting"
             usage
             exit 1
         elif [ ! -e "$device_manifest" ];then
-            log_msg "WARNING" "Device '$device_model' manifest does not exist...exiting"
+            debug_msg "WARNING" "Device '$device_model' manifest does not exist...exiting"
             usage
             exit 1
         fi
