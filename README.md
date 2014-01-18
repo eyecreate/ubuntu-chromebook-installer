@@ -1,4 +1,4 @@
-elementary OS setup script for Chromebooks
+ChromeeOS - elementary OS install script for Chromebooks
 ============================================
 
 This script will install elementary OS (ChrUbuntu) and apply automatically all the necessary fixes to run elementary OS on Chromebooks. By default, it will use ChrUbuntu to simplify the installation process, but it can be used without it.

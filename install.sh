@@ -139,14 +139,14 @@ run_command "mkdir $tmp_dir"
 log_msg "INFO" "Downloading ChrUbuntu..."
 run_command "curl -o $tmp_dir/$chrubuntu_script -L -O $chrubuntu_script_url"
 
-if [ ! -e "$chrubuntu_runonce" ];then
+#if [ ! -e "$chrubuntu_runonce" ];then
     log_msg "INFO" "Running ChrUbuntu..."
-    sudo bash $tmp_dir/$chrubuntu_script -m ubuntu-minimal -u lts -h 
+    sudo bash $tmp_dir/$chrubuntu_script -m ubuntu-minimal -u lts
     log_msg "INFO" "ChrUbuntu execution complete..."
-    log_msg "INFO" "Creating ChrUbuntu run once file..."
-    run_command "touch $chrubuntu_runonce"
-else
+    #log_msg "INFO" "Creating ChrUbuntu run once file..."
+    #run_command "touch $chrubuntu_runonce"
+#else
     log_msg "WARNING" "ChrUbuntu has already been run once...skipping"
-fi
+#fi
 
 
