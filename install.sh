@@ -141,7 +141,7 @@ run_command "curl -o $tmp_dir/$chrubuntu_script -L -O $chrubuntu_script_url"
 
 if [ ! -e "$chrubuntu_runonce" ];then
     log_msg "INFO" "Running ChrUbuntu..."
-    sudo bash $tmp_dir/$chrubuntu_script -h 
+    sudo bash $tmp_dir/$chrubuntu_script -m ubuntu-minimal -u lts -h 
     log_msg "INFO" "ChrUbuntu execution complete..."
     log_msg "INFO" "Creating ChrUbuntu run once file..."
     run_command "touch $chrubuntu_runonce"
