@@ -1,8 +1,14 @@
+#!/bin/bash
 #elementary OS install script for Chromebooks
 
 #Variables definition
+#Script variables
 current_directory=$(dirname $0)
 log_file="elementary-install.log"
+
+#External depenencies variables 
+chrubuntu_script_url="http://goo.gl/9sgchs"
+chrubuntu_script="9sgchs"
 
 #Functions definition
 usage(){
@@ -16,15 +22,42 @@ usage(){
 EOF
 }
 
-debug_message(){
-    echo "$1"
+debug_msg(){
+    debug_level="$1"
+    msg="$2"
+    case $debug_level in
+        INFO)
+            echo -e "\E[1;32m$msg"
+            echo -e '\e[0m'
+            ;;
+        WARNING)
+            echo -e "\E[1;33m$msg"
+            echo -e '\e[0m'
+            ;;
+        ERROR)
+            echo -e "\E[1;31m$msg"
+            echo -e '\e[0m'
+            ;;
+        *)
+            echo "$msg"
+            echo -e '\e[0m'
+            ;;
+    esac
 }
 
-log_message(){
-    message="$1"
-    log_format="$(date +%Y-%m-%dT%H:%M:%S) $message"
-    debug_message "$log_format" >> "$log_file"    
-    debug_message "$message"
+log_msg(){
+    debug_level="$1"
+    msg="$2"
+    log_format="$(date +%Y-%m-%dT%H:%M:%S) $debug_level $msg"
+    echo "$log_format" >> "$log_file"    
+    debug_msg "$debug_level" "$msg"
+}
+
+run_command(){
+    command="$1"
+    cmd_output=$($command 2>&1)
+    log_msg "COMMAND" "running: $command"
+    log_msg "COMMAND" "output: $cmd_output"
 }
 
 
@@ -39,11 +72,17 @@ while getopts ":h" options; do
             echo "Error - Option $OPTARG requires an argument"
             exit 1
             ;;
-        *)
-            usage
-            exit 0
-            ;;
     esac
 done
 
-log_message "Starting the installation process..."
+debug_msg "INFO" "elementary OS installation script for Chromebooks by Setsuna666 on github Setsuna666/elementaryos-chromebook"
+
+log_msg "INFO" "Downloading dependencies..."
+
+log_msg "INFO" "Downloading ChrUbuntu..."
+run_command "curl -L -O $chrubuntu_script_url"
+
+log_msg "INFO" "Running ChrUbuntu..."
+run_command "sudo bash $chrubuntu_script -h" 
+
+
