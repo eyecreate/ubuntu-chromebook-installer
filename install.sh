@@ -22,12 +22,13 @@ chrubuntu_runonce="$tmp_dir/chrubuntu-runonce"
 #Functions definition
 usage(){
 cat << EOF
-usage: $0 [DEVICE|ACTION] [OPTIONS]
+usage: $0 -d [ DEVICE|ACTION ] [ OPTIONS ]
       
 ementary OS installation script for Chromebooks
 
     OPTIONS:
     -h      Show help
+    -d      Specify a device or an action
 
     DEVICE:
         The device manifest to load for your Chromebook
@@ -85,17 +86,19 @@ run_command(){
 
 #Get command line arguments
 #Required arguments
-device_model="$1"
 
 #Optional arguments
-while getopts ":h" options; do
-    case "${options}" in
+while getopts "hd:" option; do
+    case $option in
         h)
             usage
-            exit 0
+            exit 1
             ;;
-        :)
-            echo "Error - Option $OPTARG requires an argument"
+        d)
+            device_model="$OPTARG"
+            ;;
+        ?)
+            usage
             exit 1
             ;;
     esac
@@ -110,12 +113,12 @@ case "$device_model" in
         ;;
     *)
         device_manifest="$devices_dir/$device_model/$dev_manifest_file"
-        if [ ! -e $device_manifest ];then
-            log_msg "WARNING" "Device '$device_model' does not exist...exiting"
+        if [ -z "$device_model" ]; then
+            log_msg "WARNING" "Device not specified...exiting"
             usage
             exit 1
-        elif [ "$device_model" == "" ]; then
-            log_msg "WARNING" "Device not specified...exiting"
+        elif [ ! -e "$device_manifest" ];then
+            log_msg "WARNING" "Device '$device_model' manifest does not exist...exiting"
             usage
             exit 1
         fi
