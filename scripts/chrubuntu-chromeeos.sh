@@ -222,7 +222,7 @@ mount -t ext4 ${target_rootfs} /tmp/urfs
 #mount -o bind /sys /tmp/urfs/sys
 
 #Creating /usr/bin/ in the chroot
-mkdir /tmp/urfs/usr/bin/
+mkdir -p /tmp/urfs/usr/bin/
 if [ -f /usr/bin/old_bins/cgpt ]
 then
   cp /usr/bin/old_bins/cgpt /tmp/urfs/usr/bin/
