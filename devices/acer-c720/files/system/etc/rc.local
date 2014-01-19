@@ -19,7 +19,7 @@ echo LID0 > /proc/acpi/wakeup
 echo TPAD > /proc/acpi/wakeup
 echo TSCR > /proc/acpi/wakeup
 
-#Fox fpr brogjtmess pm bppt
+#Fix to set the brightness to 50% on boot
 echo 468 > /sys/class/backlight/intel_backlight/brightness
 
 exit 0
