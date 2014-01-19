@@ -238,10 +238,11 @@ if [ -e "$device_sys_files_dir" ];then
 fi
 
 if [ -e "$device_scripts_dir" ];then
-  $chroot_scripts="$chrubuntu_chroot/tmp/scripts/"
-  log_msg "INFO" "Copying device scripts to $chroot_scripts..."
-  run_command "mkdir -p $chroot_scripts"
-  run_command "sudo cp -Rvu $device_scripts_dir/. $chroot_scripts"
+  scripts_dir="/tmp/scripts/"
+  chroot_dir_scripts="$chrubuntu_chroot/tmp/scripts/"
+  log_msg "INFO" "Copying device scripts to $chroot_dir_scripts..."
+  run_command "mkdir -p $chroot_dir_scripts"
+  run_command "sudo cp -Rvu $device_scripts_dir/. $chroot_dir_scripts"
 fi
 
 log_msg "INFO" "Mounting dependencies for the chroot..."
@@ -289,10 +290,10 @@ if [ ! -z "$ppa_pkgs" ];then
 fi
 
 #Verification for the chroot scripts directory
-if [ -e "$chroot_scripts" ];then
+if [ -e "$chroot_dir_scripts" ];then
   log_msg "INFO" "Executing device scripts..."
-  for script in $chroot_scripts/*;do
-    run_command_chroot "$chroot_scripts/$script"
+  for i in $(cd $chroot_dir_scripts; ls);do 
+    run_command_chroot "/bin/bash -c $scripts_dir/${i%%/}"
   done
 fi
 
