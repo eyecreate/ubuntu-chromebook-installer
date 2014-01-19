@@ -168,6 +168,7 @@ if [ ! -e "$chrubuntu_runonce" ]; then
       touch $chrubuntu_runonce
       sleep 10
       sudo reboot
+      exit 0
 else
       log_msg "INFO" "ChrUbuntu partitioning already done...skipping"
       log_msg "INFO" "Running ChrUbuntu to finish the formating process..."
