@@ -4,8 +4,6 @@
 #Variables definition
 #Script variables
 current_dir="$(dirname $BASH_SOURCE)"
-#A tar.gz version of elementary OS ISO (elementaryos-stable-amd64.20130810.iso) squashfs content 
-eos_system_url="http://goo.gl/qXSqf3"
 
 #Script global directory variables
 log_file="elementary-install.log"
@@ -27,6 +25,12 @@ dev_manifest_file="device.manifest"
 #ChrUbuntu configuration file
 chrubuntu_script="$scripts_dir/chrubuntu.sh"
 chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
+
+#elementary OS specific requirements
+#A tar.gz version of elementary OS ISO (elementaryos-stable-amd64.20130810.iso) squashfs content 
+eos_sys_archive_url="http://goo.gl/qXSqf3"
+eos_sys_archive="$tmp_dir/elementary_system.tar.gz"
+eos_sys_archive_md5=""
 
 #Functions definition
 usage(){
@@ -162,7 +166,15 @@ else
 fi
 
 log_msg "INFO" "Downloading elementary OS system files..."
-run_command "curl -o '$tmp_dir/elementary_system.tar.gz' -L -O $eos_system_url"
+run_command "curl -o '$eos_sys_archive' -L -O $eos_sys_archive_url"
 
+log_msg "INFO" "Validation elementary OS system files archive md5sum..."
+eos_sys_archive_dl_md5=$(md5sum $eos_sys_archive | awk '{print $1}'")
 
-
+#MD5 validation of eOS system files archive
+if [ "$eos_sys_archive_md5" != "$eos_sys_archive_dl_md5" ];then
+      log_msg "ERROR" "elementary OS system files archive MD5 does not match...exiting"
+      run_command "rm $eos_sys_archive"
+      log_msg "INFO" "Re-run this script to download the elementary OS system files archive..."
+      exit 1
+fi
