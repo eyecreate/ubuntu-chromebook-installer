@@ -168,8 +168,8 @@ fi
 log_msg "INFO" "Importing device $device_model manifest..."
 . $device_manifest
 
+log_msg "INFO" "Downloading elementary OS system files..."
 if [ ! -e "$eos_sys_archive" ];then
-      log_msg "INFO" "Downloading elementary OS system files..."
       run_command "curl -o '$eos_sys_archive' -L -O $eos_sys_archive_url"
 else
       log_msg "INFO" "elementary OS system files are already downloaded...skipping"
