@@ -238,9 +238,10 @@ if [ -e "$device_sys_files_dir" ];then
 fi
 
 if [ -e "$device_scripts_dir" ];then
-  log_msg "INFO" "Copying device scripts to $chrubuntu_chroot/tmp/scripts/..."
-  run_command "mkdir -p $chrubuntu_chroot/tmp/scripts/"
-  run_command "sudo cp -Rvu $device_scripts_dir/. $chrubuntu_chroot/tmp/scripts/"
+  $chroot_scripts="$chrubuntu_chroot/tmp/scripts/"
+  log_msg "INFO" "Copying device scripts to $chroot_scripts..."
+  run_command "mkdir -p $chroot_scripts"
+  run_command "sudo cp -Rvu $device_scripts_dir/. $chroot_scripts"
 fi
 
 log_msg "INFO" "Mounting dependencies for the chroot..."
@@ -255,7 +256,7 @@ run_command "sudo mv $tmp_dir/resolv.conf $chrubuntu_chroot/etc/resolv.conf"
 system_partition_uuid=$(sudo blkid $system_partition | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p')
 log_msg "INFO" "Getting UUID from system partition..."
 log_msg "Creating /etc/fstab..."
-echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap  none  swap  sw  0   0" > $tmp_dir/fstab
+echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $chrubuntu_chroot/etc/fstab"
 
 log_msg "INFO" "Installing and updating grub to $system_drive..."
@@ -266,14 +267,38 @@ log_msg "INFO" "Installing elementary OS updates..."
 run_command_chroot "apt-get update"
 run_command_chroot "apt-get -y upgrade"
 
+#Device manifest validation for kernel packages from an URL
 if [ ! -z "$kernel_url_pkgs" ];then
   kernel_url_pkgs_array=($kernel_url_pkgs)
   kernel_dir="/tmp/kernel/"
   log_msg "INFO" "Downloading and installing kernel package(s) from URL"
   run_command_chroot "mkdir $kernel_dir"
-  for kernel_pkg in ${kernel_url_pkgs_array};do
+  for kernel_pkg in "${kernel_url_pkgs_array[@]}";do
     run_command_chroot "wget -P $kernel_dir $kernel_pkg"
   done
   run_command_chroot "dpkg -i $kernel_dir/*.deb"
 fi
 
+#Device manifest validation for additional packages from PPA
+if [ ! -z "$ppa_pkgs" ];then
+  ppa_pkgs_array=($ppa_pkgs)
+  for ppa_pkg in "${ppa_pkgs_array[@]}";do
+    run_command_chroot "apt-get update"
+    run_command_chroot "apt-get -y install $ppa_pkg"
+  done
+fi
+
+#Verification for the presence of chroot scripts
+if [ -e "$chroot_scripts" ];then
+  log_msg "INFO" "Executing device scripts..."
+  for script in $chroot_scripts/*;do
+    run_command_chroot "$chroot_scripts/$script"
+  done
+fi
+
+#Verification if the swap file option in specified in the device manifest
+if [ ! -z "$swap_file_size" ];then 
+  log_msg "INFO" "Creating swap file..."
+  run_command_chroot "dd if=/dev/zero of=/swap.img bs=1M count=$swap_file_size"
+  run_command_chroot "mkswap /swap.img"
+fi
