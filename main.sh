@@ -15,6 +15,7 @@ files_dir="$current_dir/files/"
 scripts_dir="$current_dir/scripts/"
 sys_files_dir="$files_dir/system/"
 user_files_dir="$files_dir/user/"
+web_dl_dir="$tmp_dir/web_dl/"
 
 #Device specific variables
 device_manifest="none"
@@ -151,5 +152,7 @@ fi
 log_msg "INFO" "Running ChrUbuntu..."
 sudo bash $chrubuntu_script -m $chrubuntu_metapackage -u $chrubuntu_os_version
 log_msg "INFO" "ChrUbuntu execution complete..."
+log_msg "INFO" "System will reboot in 10 seconds..."
+sleep 10
 
 

@@ -160,7 +160,7 @@ else
     # finally rootc
     cgpt add -i 7 -b $rootc_start -s $rootc_size -l ROOT-C ${target_disk}
 
-    reboot
+    #reboot
     exit
   fi
 fi
@@ -168,24 +168,24 @@ fi
 # hwid lets us know if this is a Mario (Cr-48), Alex (Samsung Series 5), ZGB (Acer), etc
 hwid="`crossystem hwid`"
 
-if [ "$ubuntu_version" = "lts" ]
-then
-  ubuntu_version=`wget --quiet -O - http://changelogs.ubuntu.com/meta-release | grep "^Version:" | grep "LTS" | tail -1 | sed -r 's/^Version: ([^ ]+)( LTS)?$/\1/'`
-  tar_file="http://cdimage.ubuntu.com/ubuntu-core/releases/$ubuntu_version/release/ubuntu-core-$ubuntu_version-core-$ubuntu_arch.tar.gz"
-elif [ "$ubuntu_version" = "latest" ]
-then
-  ubuntu_version=`wget --quiet -O - http://changelogs.ubuntu.com/meta-release | grep "^Version: " | tail -1 | sed -r 's/^Version: ([^ ]+)( LTS)?$/\1/'`
-  tar_file="http://cdimage.ubuntu.com/ubuntu-core/releases/$ubuntu_version/release/ubuntu-core-$ubuntu_version-core-$ubuntu_arch.tar.gz"
-elif [ $ubuntu_version = "dev" ]
-then
-  ubuntu_version=`wget --quiet -O - http://changelogs.ubuntu.com/meta-release-development | grep "^Version: " | tail -1 | sed -r 's/^Version: ([^ ]+)( LTS)?$/\1/'`
-  ubuntu_animal=`wget --quiet -O - http://changelogs.ubuntu.com/meta-release-development | grep "^Dist: " | tail -1 | sed -r 's/^Dist: (.*)$/\1/'`
-  tar_file="http://cdimage.ubuntu.com/ubuntu-core/daily/current/$ubuntu_animal-core-$ubuntu_arch.tar.gz"
-fi
+#if [ "$ubuntu_version" = "lts" ]
+#then
+#  ubuntu_version=`wget --quiet -O - http://changelogs.ubuntu.com/meta-release | grep "^Version:" | grep "LTS" | tail -1 | sed -r 's/^Version: ([^ ]+)( LTS)?$/\1/'`
+#  tar_file="http://cdimage.ubuntu.com/ubuntu-core/releases/$ubuntu_version/release/ubuntu-core-$ubuntu_version-core-$ubuntu_arch.tar.gz"
+#elif [ "$ubuntu_version" = "latest" ]
+#then
+#  ubuntu_version=`wget --quiet -O - http://changelogs.ubuntu.com/meta-release | grep "^Version: " | tail -1 | sed -r 's/^Version: ([^ ]+)( LTS)?$/\1/'`
+#  tar_file="http://cdimage.ubuntu.com/ubuntu-core/releases/$ubuntu_version/release/ubuntu-core-$ubuntu_version-core-$ubuntu_arch.tar.gz"
+#elif [ $ubuntu_version = "dev" ]
+#then
+#  ubuntu_version=`wget --quiet -O - http://changelogs.ubuntu.com/meta-release-development | grep "^Version: " | tail -1 | sed -r 's/^Version: ([^ ]+)( LTS)?$/\1/'`
+#  ubuntu_animal=`wget --quiet -O - http://changelogs.ubuntu.com/meta-release-development | grep "^Dist: " | tail -1 | sed -r 's/^Dist: (.*)$/\1/'`
+#  tar_file="http://cdimage.ubuntu.com/ubuntu-core/daily/current/$ubuntu_animal-core-$ubuntu_arch.tar.gz"
+#fi
 
 echo_green "\nChrome device model is: $hwid\n"
-echo_green "Installing Ubuntu ${ubuntu_version} with metapackage ${ubuntu_metapackage}\n"
-echo_green "Installing Ubuntu Arch: $ubuntu_arch\n"
+#echo_green "Installing Ubuntu ${ubuntu_version} with metapackage ${ubuntu_metapackage}\n"
+#echo_green "Installing Ubuntu Arch: $ubuntu_arch\n"
 
 read -p "Press [Enter] to continue..."
 
@@ -198,7 +198,7 @@ else
   target_kern="${target_disk}6"
 fi
 
-echo_green "Target Kernel Partition: $target_kern  Target Root FS: ${target_rootfs}"
+#echo_green "Target Kernel Partition: $target_kern  Target Root FS: ${target_rootfs}"
 
 if mount|grep ${target_rootfs}
 then
@@ -214,13 +214,15 @@ then
 fi
 mount -t ext4 ${target_rootfs} /tmp/urfs
 
-wget -O - $tar_file | tar xzvvp -C /tmp/urfs/
+#wget -O - $tar_file | tar xzvvp -C /tmp/urfs/
 
-mount -o bind /proc /tmp/urfs/proc
-mount -o bind /dev /tmp/urfs/dev
-mount -o bind /dev/pts /tmp/urfs/dev/pts
-mount -o bind /sys /tmp/urfs/sys
+#mount -o bind /proc /tmp/urfs/proc
+#mount -o bind /dev /tmp/urfs/dev
+#mount -o bind /dev/pts /tmp/urfs/dev/pts
+#mount -o bind /sys /tmp/urfs/sys
 
+#Creating /usr/bin/ in the chroot
+mkdir /tmp/urfs/usr/bin/
 if [ -f /usr/bin/old_bins/cgpt ]
 then
   cp /usr/bin/old_bins/cgpt /tmp/urfs/usr/bin/
@@ -228,10 +230,10 @@ else
   cp /usr/bin/cgpt /tmp/urfs/usr/bin/
 fi
 
-chmod a+rx /tmp/urfs/usr/bin/cgpt
-cp /etc/resolv.conf /tmp/urfs/etc/
-echo chrubuntu > /tmp/urfs/etc/hostname
-echo -e "\n127.0.1.1       chrubuntu" >> /tmp/urfs/etc/hosts
+#chmod a+rx /tmp/urfs/usr/bin/cgpt
+#cp /etc/resolv.conf /tmp/urfs/etc/
+#echo chrubuntu > /tmp/urfs/etc/hostname
+#echo -e "\n127.0.1.1       chrubuntu" >> /tmp/urfs/etc/hosts
 # The following lines are desirable for IPv6 capable hosts
 #::1     localhost ip6-localhost ip6-loopback
 #fe00::0 ip6-localnet
@@ -244,46 +246,46 @@ echo -e "\n127.0.1.1       chrubuntu" >> /tmp/urfs/etc/hosts
 #apt-get update
 #apt-get -y install google-chrome-stable"
 
-add_apt_repository_package='software-properties-common'
-ubuntu_major_version=${ubuntu_version:0:2}
-ubuntu_minor_version=${ubuntu_version:3:2}
-if [ $ubuntu_major_version -le 12 ] && [ $ubuntu_minor_version -lt 10 ]
-then
-  add_apt_repository_package='python-software-properties'
-fi
+#add_apt_repository_package='software-properties-common'
+#ubuntu_major_version=${ubuntu_version:0:2}
+#ubuntu_minor_version=${ubuntu_version:3:2}
+#if [ $ubuntu_major_version -le 12 ] && [ $ubuntu_minor_version -lt 10 ]
+#then
+#  add_apt_repository_package='python-software-properties'
+#fi
 
-echo -e "export DEBIAN_FRONTEND=noninteractive
-apt-get -y update
-apt-get -y dist-upgrade
-apt-get -y install ubuntu-minimal
-apt-get -y install wget
-apt-get -y install $add_apt_repository_package
-add-apt-repository main
-add-apt-repository universe
-add-apt-repository restricted
-add-apt-repository multiverse 
-apt-get update
-apt-get -y install $ubuntu_metapackage
-$cr_install
-apt-get -y install linux
-apt-get -y install grub-pc
-grub-mkconfig -o /boot/grub/grub.cfg
-grub-install ${target_disk} --force
+#echo -e "export DEBIAN_FRONTEND=noninteractive
+#apt-get -y update
+#apt-get -y dist-upgrade
+#apt-get -y install ubuntu-minimal
+#apt-get -y install wget
+#apt-get -y install $add_apt_repository_package
+#add-apt-repository main
+#add-apt-repository universe
+#add-apt-repository restricted
+#add-apt-repository multiverse 
+#apt-get update
+#apt-get -y install $ubuntu_metapackage
+#$cr_install
+#apt-get -y install linux
+#apt-get -y install grub-pc
+#grub-mkconfig -o /boot/grub/grub.cfg
+#grub-install ${target_disk} --force
 #mykern=\`ls /boot/vmlinuz-* | grep -oP \"[0-9].*\" | sort -rV | head -1\`
 #wget http://goo.gl/kz917j
 #bash kz917j \$mykern
 #rm kz917j
-useradd -m user -s /bin/bash
-echo user | echo user:user | chpasswd
-adduser user adm
-adduser user sudo
-if [ -f /usr/lib/lightdm/lightdm-set-defaults ]
-then
-  /usr/lib/lightdm/lightdm-set-defaults --autologin user
-fi" > /tmp/urfs/install-ubuntu.sh
+#useradd -m user -s /bin/bash
+#echo user | echo user:user | chpasswd
+#adduser user adm
+#adduser user sudo
+#if [ -f /usr/lib/lightdm/lightdm-set-defaults ]
+#then
+#  /usr/lib/lightdm/lightdm-set-defaults --autologin user
+#fi" > /tmp/urfs/install-ubuntu.sh
 
-chmod a+x /tmp/urfs/install-ubuntu.sh
-chroot /tmp/urfs /bin/bash -c /install-ubuntu.sh
+#chmod a+x /tmp/urfs/install-ubuntu.sh
+#chroot /tmp/urfs /bin/bash -c /install-ubuntu.sh
 #rm /tmp/urfs/install-ubuntu.sh
 
 #echo -e "Section \"InputClass\"
