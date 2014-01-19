@@ -4,6 +4,8 @@
 #Variables definition
 #Script variables
 current_dir="$(dirname $BASH_SOURCE)"
+#A tar.gz version of elementary OS ISO (elementaryos-stable-amd64.20130810.iso) squashfs content 
+eos_system_url="http://goo.gl/qXSqf3"
 
 #Script global directory variables
 log_file="elementary-install.log"
@@ -23,11 +25,8 @@ dev_manifest_file="device.manifest"
 
 #External depenencies variables 
 #ChrUbuntu configuration file
-chrubuntu_conf="$conf_dir/chrubuntu.conf"
 chrubuntu_script="$scripts_dir/chrubuntu.sh"
-if [ -e "$chrubuntu_conf" ]; then
-. $chrubuntu_conf
-fi
+chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
 
 #Functions definition
 usage(){
@@ -137,22 +136,33 @@ esac
 
 debug_msg "INFO" "ChromeeOS - elementary OS installation script for Chromebooks by Setsuna666 on github Setsuna666/elementaryos-chromebook"
 #Creating log files directory before using the log_msg function
-mkdir $log_dir
-
-log_msg "INFO" "Device model is $device_model"
-log_msg "INFO" "Creating and downloading dependencies..."
-run_command "mkdir $tmp_dir"
-
-if [ ! -z "$chrubuntu_web_dl" ]; then
-    chrubuntu_script="$tmp_dir/$chrubuntu_script"
-    log_msg "INFO" "Downloading ChrUbuntu..."
-    run_command "curl -o $tmp_dir/$chrubuntu_script -L -O $chrubuntu_web_dl"
+if [ ! -e "$log_dir" ]; then
+      mkdir $log_dir
 fi
 
-log_msg "INFO" "Running ChrUbuntu..."
-sudo bash $chrubuntu_script -m $chrubuntu_metapackage -u $chrubuntu_os_version
-log_msg "INFO" "ChrUbuntu execution complete..."
-log_msg "INFO" "System will reboot in 10 seconds..."
-sleep 10
+log_msg "INFO" "Device model is $device_model"
+
+if [ ! -e "$tmp_dir" ]; then
+      log_msg "INFO" "Creating and downloading dependencies..."
+      run_command "mkdir $tmp_dir"
+fi
+
+if [ ! -e "$chrubuntu_runonce" ]; then
+      log_msg "INFO" "Running ChrUbuntu to setup partitioning..."
+      sudo bash $chrubuntu_script
+      log_msg "INFO" "ChrUbuntu execution complete..."
+      log_msg "INFO" "System will reboot in 10 seconds..."
+      touch $chrubuntu_runonce
+      sleep 10
+      reboot
+else
+      log_msg "INFO" "ChrUbuntu partitioning already done...skipping"
+      log_msg "INFO" "Running ChrUbuntu to finish the formating process..."
+      sudo bash $chrubuntu_script
+fi
+
+log_msg "INFO" "Downloading elementary OS system files..."
+run_command "curl -o '$tmp_dir/elementary_system.tar.gz' -L -O $eos_system_url"
+
 
 
