@@ -169,7 +169,7 @@ log_msg "INFO" "Downloading elementary OS system files..."
 run_command "curl -o '$eos_sys_archive' -L -O $eos_sys_archive_url"
 
 log_msg "INFO" "Validation elementary OS system files archive md5sum..."
-eos_sys_archive_dl_md5=$(md5sum $eos_sys_archive | awk '{print $1}'")
+eos_sys_archive_dl_md5=$(md5sum $eos_sys_archive | awk '{print $1}')
 
 #MD5 validation of eOS system files archive
 if [ "$eos_sys_archive_md5" != "$eos_sys_archive_dl_md5" ];then
