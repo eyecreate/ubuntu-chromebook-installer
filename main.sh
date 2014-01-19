@@ -99,11 +99,8 @@ run_command(){
 
 run_command_chroot(){
   command="$1"
-  cmd_output=$(sudo chroot $chrubuntu_chroot /bin/bash -c "$command" 2>&1)
   log_msg "COMMAND" "running: $command"
-  if [ "$cmd_output" != "" ];then
-    log_msg "COMMAND" "output: $cmd_output"
-  fi
+  sudo chroot $chrubuntu_chroot /bin/bash -c "$command"
 }
 
 
@@ -243,11 +240,13 @@ run_command "sudo mount -o bind /sys/ $chrubuntu_chroot/sys/"
 run_command "sudo mount -o bind /proc/ $chrubuntu_chroot/proc/"
 
 log_msg "INFO" "Creating /etc/resolv.conf..."
-run_command "echo -e \"nameserver 8.8.8.8\nnameserver 8.8.4.4 > $tmp_dir/resolv.conf\""
+echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > $tmp_dir/resolv.conf
 run_command "sudo mv $tmp_dir/resolv.conf $chrubuntu_chroot/etc/resolv.conf"
-system_partition_uuid=$(sudo blkid $system_partition)
+system_partition_uuid=$(sudo blkid $system_partition | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p')
+log_msg "INFO" Getting UUID from system partition
+$system_partition_uuid
 log_msg "Creating /etc/fstab..."
-run_command "echo -e \"proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap  none  swap  sw  0   0\" > $tmp_dir/fstab"
+echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $chrubuntu_chroot/etc/fstab"
 
 log_msg "INFO" "Installing and updating grub to $system_drive..."
@@ -257,3 +256,15 @@ run_command_chroot "update-grub"
 log_msg "INFO" "Installing elementary OS updates..."
 run_command_chroot "apt-get update"
 run_command_chroot "apt-get -y upgrade"
+
+if [ -e "$kernel_url_pkgs" ];then
+  kernel_url_pkgs_array=($kernel_url_pkgs)
+  kernel_dir="/tmp/kernel/"
+  log_msg "INFO" "Downloading and installing kernel package(s) from URL"
+  run_command_chroot "mkdir $kernel_dir"
+  for kernel_pkg in ${kernel_url_pkgs_array};do
+    run_command_chroot "wget -P $kernel_dir $kernel_pkg"
+  done
+  run_command_chroot "dpkg -i $kernel_dir/*.deb"
+fi
+
