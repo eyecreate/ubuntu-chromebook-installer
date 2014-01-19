@@ -23,7 +23,7 @@ dev_manifest_file="device.manifest"
 
 #External depenencies variables 
 #ChrUbuntu configuration file
-chrubuntu_script="$scripts_dir/chrubuntu.sh"
+chrubuntu_script="$scripts_dir/chrubuntu-chromeeos.sh"
 chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
 
 #elementary OS specific requirements
@@ -158,7 +158,7 @@ if [ ! -e "$chrubuntu_runonce" ]; then
       log_msg "INFO" "System will reboot in 10 seconds..."
       touch $chrubuntu_runonce
       sleep 10
-      reboot
+      sudo reboot
 else
       log_msg "INFO" "ChrUbuntu partitioning already done...skipping"
       log_msg "INFO" "Running ChrUbuntu to finish the formating process..."
@@ -184,4 +184,6 @@ if [ "$eos_sys_archive_md5" != "$eos_sys_archive_dl_md5" ];then
       run_command "rm $eos_sys_archive"
       log_msg "INFO" "Re-run this script to download the elementary OS system files archive..."
       exit 1
+else
+      log_msg "INFO" "elementary OS system files archive MD5 match...continuing"
 fi

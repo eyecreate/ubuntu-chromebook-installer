@@ -1,7 +1,7 @@
 #elementary OS manifest for the Acer C720 Chromebook
 
 #Devices hardware
-root_drive="/dev/sda"
+system_drive="/dev/sda"
 system_partition="${root_drive}7"
 
 #Kernel package(s) to install

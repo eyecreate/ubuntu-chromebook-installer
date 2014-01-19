@@ -3,8 +3,8 @@ tempbuild=`mktemp -d`
 cd $tempbuild
 
 # Determine kernel version (with and without Ubuntu-specific suffix)
-mykern=${1:-$(uname -r)}
-mykernver=linux-$(echo $mykern | cut -d'-' -f 1)
+mykern=3.12.5-031205-generic
+mykernver=linux-3.12.5
 
 # Install necessary deps to build a kernel
 sudo apt-get build-dep -y --no-install-recommends linux-image-$mykern
