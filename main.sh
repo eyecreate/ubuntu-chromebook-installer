@@ -242,11 +242,13 @@ run_command "sudo mount -o bind /dev/pts $chrubuntu_chroot/dev/pts"
 run_command "sudo mount -o bind /sys/ $chrubuntu_chroot/sys/"
 run_command "sudo mount -o bind /proc/ $chrubuntu_chroot/proc/"
 
-log_msg "INFO" "Creating /etc/resolv.conf in the chroot..."
-run_command_chroot "echo -e \'nameserver 8.8.8.8\nnameserver 8.8.4.4 > $chrubuntu_chroot/etc/resolv.conf\'"
+log_msg "INFO" "Creating /etc/resolv.conf..."
+run_command "echo -e \"nameserver 8.8.8.8\nnameserver 8.8.4.4 > $tmp_dir/resolv.conf\""
+run_command "sudo mv $tmp_dir/resolv.conf $chrubuntu_chroot/etc/resolv.conf"
 system_partition_uuid=$(sudo blkid $system_partition)
-log_msg "Creating /etc/fstab in the chroot..."
-run_command_chroot "echo -e \'proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap  none  swap  sw  0   0\' > $chrubuntu_chroot/etc/fstab"
+log_msg "Creating /etc/fstab..."
+run_command "echo -e \"proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap  none  swap  sw  0   0\" > $tmp_dir/fstab"
+run_command "sudo mv $tmp_dir/fstab $chrubuntu_chroot/etc/fstab"
 
 log_msg "INFO" "Installing and updating grub to $system_drive..."
 run_command_chroot "grub-install $system_drive --force"
