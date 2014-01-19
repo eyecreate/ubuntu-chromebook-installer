@@ -25,6 +25,7 @@ dev_manifest_file="device.manifest"
 #ChrUbuntu configuration file
 chrubuntu_script="$scripts_dir/chrubuntu-chromeeos.sh"
 chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
+chrubuntu_chroot="/tmp/urfs"
 
 #elementary OS specific requirements
 #A tar.gz version of elementary OS ISO (elementaryos-stable-amd64.20130810.iso) squashfs content 
@@ -126,6 +127,9 @@ case "$device_model" in
         ;;
     *)
         device_manifest="$devices_dir/$device_model/$dev_manifest_file"
+        device_scripts_dir="$devices_dir/$device_model/scripts/"
+        device_files_dir="$device_dir/$device_model/files/"
+        device_sys_files_dir="$devices_files_dir/system/"
         if [ -z "$device_model" ]; then
             debug_msg "WARNING" "Device not specified...exiting"
             usage
@@ -168,6 +172,17 @@ fi
 log_msg "INFO" "Importing device $device_model manifest..."
 . $device_manifest
 
+#Validating that required variables are defined in the device manifest
+if [ -z "$system_drive" ];then
+  log_msg "ERROR" "System drive variable not defined in device manifest $device_manifest...exiting"
+  exit 1
+fi
+
+if [ -z "$system_partition" ];then
+  log_msg "ERROR" "System partition variable not defined in device manifest $device_manifest...exiting"
+  exit 1
+fi
+
 log_msg "INFO" "Downloading elementary OS system files..."
 if [ ! -e "$eos_sys_archive" ];then
       run_command "curl -o '$eos_sys_archive' -L -O $eos_sys_archive_url"
@@ -187,3 +202,35 @@ if [ "$eos_sys_archive_md5" != "$eos_sys_archive_dl_md5" ];then
 else
       log_msg "INFO" "elementary OS system files archive MD5 match...continuing"
 fi
+
+log_msg "INFO" "Installing elementary OS system files to $chrubuntu_chroot..."
+run_command "tar -xvf $eos_sys_archive -C $chrubuntu_chroot"
+
+log_msg "INFO" "Applying fixes for elementary OS..."
+run_command "sudo chmod u+s $chrubuntu_chroot/usr/lib/dbus-1.0/dbus-daemon-launch-helper"
+run_command "sudo chmod 777 $chrubuntu_chroot/tmp/"
+
+if [ -e "$sys_files_dir" ];then
+  log_msg "INFO" "Copying global system files to $chrubuntu_chroot..."
+  run_command "sudo cp -Rvu $sys_files_dir/. $chrubuntu_chroot"
+fi
+
+if [ -e "$device_scripts_dir" ];then
+  log_msg "INFO" "Copying device scripts to $chrubuntu_chroot/tmp/scripts/..."
+  run_command "mkdir -p $chrubuntu_chroot/tmp/scripts/"
+  run_command "cp -Rvu $device_scripts_dir/. $chrubuntu_chroot/tmp/scripts/"
+fi
+
+log_msg "INFO" "Creating dependencies before mouting the chroot..."
+log_msg "INFO" "Creating /etc/resolv.conf in the chroot..."
+run_command "echo -e 'nameserver 8.8.8.8\nnameserver 8.8.4.4 > $chrubuntu_chroot/etc/resolv.conf'"
+system_partition_uuid=$(sudo blkid $system_partition)
+log_msg "Creating /etc/fstab in the chroot..."
+run_command "echo -e 'proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap  none  swap  sw  0   0' > $chrubuntu_chroot/etc/fstab"
+
+log_msg "INFO" "Mounting dependencies for the chroot..."
+run_command "sudo mount -o bind /dev/ $chrubuntu_chroot/dev/"
+run_command "sudo mount -p bind /dev/pts $chrubuntu_chroot/dev/pts"
+run_command "sudo mount -o bind /sys/ $chrubuntu_chroot/sys/"
+run_command "sudo mount -o bind /proc/ $chrubuntu_chroot/proc/"
+

@@ -5,14 +5,24 @@ system_drive="/dev/sda"
 system_partition="${root_drive}7"
 
 #Kernel package(s) to install
-kernel_repository_packages=""
-kernel_local_packages=""
-kernel_web_packages="http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/linux-headers-3.12.5-031205-generic_3.12.5-031205.201312120254_amd64.deb http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/linux-headers-3.12.5-031205_3.12.5-031205.201312120254_all.deb http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/linux-image-3.12.5-031205-generic_3.12.5-031205.201312120254_amd64.deb"
+#Add kernel ppa for this device
+kernel_ppa=""
+#Add kernel packages from a PPA
+kernel_ppa_pkgs=""
+#Add kernel packages from a local directory
+kernel_local_pkgs=""
+#Add kernel packages from URL
+kernel_url_pkgs="http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/linux-headers-3.12.5-031205-generic_3.12.5-031205.201312120254_amd64.deb http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/linux-headers-3.12.5-031205_3.12.5-031205.201312120254_all.deb http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/linux-image-3.12.5-031205-generic_3.12.5-031205.201312120254_amd64.deb"
 
 #Device specific package(s) to install
-device_repository_packages=""
-device_local_packages=""
+#Add device packages from a PPA
+device_ppa_pkgs=""
+#Add device packages from local directory
+device_local_pkgs=""
 
 #Additional repository(ies) and package(s) to install
-repository_packages=""
-additional_repository=""
+#Add additional PPA
+additional_ppa=""
+#Add packages from a PPA
+ppa_pkgs=""
+
