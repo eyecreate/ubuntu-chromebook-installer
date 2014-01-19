@@ -190,6 +190,16 @@ if [ -z "$system_partition" ];then
   exit 1
 fi
 
+if [ ! -e "$system_drive" ];then
+  log_msg "ERROR" "System drive $system_drive does not exist...exiting"
+  exit 1
+fi
+
+if [ ! -e "$system_partition" ];then
+  log_msg "ERROR" "System drive $system_partition does not exist...exiting"
+  exit 1
+fi
+
 log_msg "INFO" "Downloading elementary OS system files..."
 if [ ! -e "$eos_sys_archive" ];then
       run_command "curl -o '$eos_sys_archive' -L -O $eos_sys_archive_url"
@@ -243,8 +253,7 @@ log_msg "INFO" "Creating /etc/resolv.conf..."
 echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > $tmp_dir/resolv.conf
 run_command "sudo mv $tmp_dir/resolv.conf $chrubuntu_chroot/etc/resolv.conf"
 system_partition_uuid=$(sudo blkid $system_partition | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p')
-log_msg "INFO" Getting UUID from system partition
-$system_partition_uuid
+log_msg "INFO" "Getting UUID from system partition..."
 log_msg "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $chrubuntu_chroot/etc/fstab"
@@ -257,7 +266,7 @@ log_msg "INFO" "Installing elementary OS updates..."
 run_command_chroot "apt-get update"
 run_command_chroot "apt-get -y upgrade"
 
-if [ -e "$kernel_url_pkgs" ];then
+if [ ! -z "$kernel_url_pkgs" ];then
   kernel_url_pkgs_array=($kernel_url_pkgs)
   kernel_dir="/tmp/kernel/"
   log_msg "INFO" "Downloading and installing kernel package(s) from URL"
