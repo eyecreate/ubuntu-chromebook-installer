@@ -99,7 +99,7 @@ run_command(){
 
 run_command_chroot(){
   command="$1"
-  run_command "sudo chroot $chrubuntu_chroot \"$command\""
+  run_command "sudo chroot $chrubuntu_chroot /bin/bash $command"
 }
 
 
