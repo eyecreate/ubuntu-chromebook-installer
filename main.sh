@@ -220,18 +220,23 @@ if [ -e "$sys_files_dir" ];then
   run_command "sudo cp -Rvu $sys_files_dir/. $chrubuntu_chroot"
 fi
 
+if [ -e "$device_sys_files_dir" ];then
+  log_msg "INFO" "Copying device system files to $chrubuntu_chroot..."
+  run_command "sudo cp -Rvu $device_sys_files_dir/. $chrubuntu_chroot"
+fi
+
 if [ -e "$device_scripts_dir" ];then
   log_msg "INFO" "Copying device scripts to $chrubuntu_chroot/tmp/scripts/..."
   run_command "mkdir -p $chrubuntu_chroot/tmp/scripts/"
-  run_command "cp -Rvu $device_scripts_dir/. $chrubuntu_chroot/tmp/scripts/"
+  run_command "sudo cp -Rvu $device_scripts_dir/. $chrubuntu_chroot/tmp/scripts/"
 fi
 
 log_msg "INFO" "Creating dependencies before mouting the chroot..."
 log_msg "INFO" "Creating /etc/resolv.conf in the chroot..."
-run_command "echo -e 'nameserver 8.8.8.8\nnameserver 8.8.4.4 > $chrubuntu_chroot/etc/resolv.conf'"
+run_command "sudo echo -e 'nameserver 8.8.8.8\nnameserver 8.8.4.4 > $chrubuntu_chroot/etc/resolv.conf'"
 system_partition_uuid=$(sudo blkid $system_partition)
 log_msg "Creating /etc/fstab in the chroot..."
-run_command "echo -e 'proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap  none  swap  sw  0   0' > $chrubuntu_chroot/etc/fstab"
+run_command "sudo echo -e 'proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap  none  swap  sw  0   0' > $chrubuntu_chroot/etc/fstab"
 
 log_msg "INFO" "Mounting dependencies for the chroot..."
 run_command "sudo mount -o bind /dev/ $chrubuntu_chroot/dev/"
