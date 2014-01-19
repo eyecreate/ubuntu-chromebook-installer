@@ -165,6 +165,9 @@ else
       sudo bash $chrubuntu_script
 fi
 
+log_msg "INFO" "Importing device $device_model manifest..."
+. $device_manifest
+
 log_msg "INFO" "Downloading elementary OS system files..."
 run_command "curl -o '$eos_sys_archive' -L -O $eos_sys_archive_url"
 
