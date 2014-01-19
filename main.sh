@@ -97,6 +97,11 @@ run_command(){
     fi
 }
 
+run_command_chroot(){
+  command="$1"
+  run_command "sudo chroot $chrubuntu_chroot $command"
+}
+
 
 #Get command line arguments
 #Required arguments
@@ -234,3 +239,9 @@ run_command "sudo mount -p bind /dev/pts $chrubuntu_chroot/dev/pts"
 run_command "sudo mount -o bind /sys/ $chrubuntu_chroot/sys/"
 run_command "sudo mount -o bind /proc/ $chrubuntu_chroot/proc/"
 
+log_msg "INFO" "Installing and updating grub to $system_drive..."
+run_command_chroot "grub-install $system_drive --force"
+run_command_chroot "$chrubuntu_chroot"
+
+log_msg "INFO" "Installing elementary OS updates..."
+run_command_chroot "apt-get update && apt-get -y upgrade"
