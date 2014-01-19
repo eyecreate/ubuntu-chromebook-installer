@@ -29,7 +29,7 @@ chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
 #elementary OS specific requirements
 #A tar.gz version of elementary OS ISO (elementaryos-stable-amd64.20130810.iso) squashfs content 
 eos_sys_archive_url="http://goo.gl/qXSqf3"
-eos_sys_archive="$tmp_dir/elementary_system.tar.gz"
+eos_sys_archive="$tmp_dir/elementaryos_system.tar.gz"
 eos_sys_archive_md5="b619ff3a341421d422e07b34d54c239e"
 
 #Functions definition
