@@ -230,7 +230,7 @@ else
   cp /usr/bin/cgpt /tmp/urfs/usr/bin/
 fi
 
-#chmod a+rx /tmp/urfs/usr/bin/cgpt
+chmod a+rx /tmp/urfs/usr/bin/cgpt
 #cp /etc/resolv.conf /tmp/urfs/etc/
 #echo chrubuntu > /tmp/urfs/etc/hostname
 #echo -e "\n127.0.1.1       chrubuntu" >> /tmp/urfs/etc/hosts
