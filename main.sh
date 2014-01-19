@@ -267,7 +267,7 @@ log_msg "INFO" "Installing elementary OS updates..."
 run_command_chroot "apt-get update"
 run_command_chroot "apt-get -y upgrade"
 
-#Device manifest validation for kernel packages from an URL
+#Device manifest validation for the installation ofkernel packages from an URL
 if [ ! -z "$kernel_url_pkgs" ];then
   kernel_url_pkgs_array=($kernel_url_pkgs)
   kernel_dir="/tmp/kernel/"
@@ -279,7 +279,7 @@ if [ ! -z "$kernel_url_pkgs" ];then
   run_command_chroot "dpkg -i $kernel_dir/*.deb"
 fi
 
-#Device manifest validation for additional packages from PPA
+#Device manifest validation for the installation additional packages from PPA
 if [ ! -z "$ppa_pkgs" ];then
   ppa_pkgs_array=($ppa_pkgs)
   for ppa_pkg in "${ppa_pkgs_array[@]}";do
@@ -288,7 +288,7 @@ if [ ! -z "$ppa_pkgs" ];then
   done
 fi
 
-#Verification for the presence of chroot scripts
+#Verification for the chroot scripts directory
 if [ -e "$chroot_scripts" ];then
   log_msg "INFO" "Executing device scripts..."
   for script in $chroot_scripts/*;do
@@ -296,7 +296,7 @@ if [ -e "$chroot_scripts" ];then
   done
 fi
 
-#Verification if the swap file option in specified in the device manifest
+#Verify if the swap file option in specified in the device manifest
 if [ ! -z "$swap_file_size" ];then 
   log_msg "INFO" "Creating swap file..."
   run_command_chroot "dd if=/dev/zero of=/swap.img bs=1M count=$swap_file_size"
