@@ -23,7 +23,7 @@ Usage
 
 **ATTENTION: This will wipe everything on your device**
 
-1. Enable [developer mode](http://www.chromium.org/chromium-os/developer-information-for-chrome-os-devices/acer-c720-chromebook#TOC-Developer-Recovery-Mode) on your device
+1. Enable [developer mode](http://www.chromium.org/chromium-os/developer-information-for-chrome-os-devices) on your device
 2. Download [ChromeeOS v0.1](https://github.com/Setsuna666/elementaryos-chromebook/archive/v0.1.zip) and extract it to a removable media
 3. Boot into ChromeOS, connect to a wireless network and log in as guest
 4. Open a shell CTRL+ALT+t and type `shell`
