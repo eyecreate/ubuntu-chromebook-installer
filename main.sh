@@ -283,6 +283,7 @@ fi
 #Device manifest validation for the installation additional packages from PPA
 if [ ! -z "$ppa_pkgs" ];then
   ppa_pkgs_array=($ppa_pkgs)
+  log_msg "INFO" "Installing packages from PPA...""
   for ppa_pkg in "${ppa_pkgs_array[@]}";do
     run_command_chroot "apt-get update"
     run_command_chroot "apt-get -y install $ppa_pkg"
