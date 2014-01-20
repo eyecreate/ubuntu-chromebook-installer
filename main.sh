@@ -307,7 +307,7 @@ fi
 if [ -e "$chroot_dir_scripts" ];then
   log_msg "INFO" "Executing device scripts..."
   for i in $(cd $chroot_dir_scripts; ls);do 
-    run_command_chroot "$scripts_dir/${i%%/}"
+    run_command_chroot "/bin/bash -c $scripts_dir/${i%%/}"
   done
 fi
 
@@ -321,8 +321,22 @@ run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "chmod 777 /tmp/"
 run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem"
 
+
+log_msg "INFO" "Create a user profile for your system..."
+read -p "Enter your full name:" system_full_name
+read -p "Enter your username:" system_username
+run_command_chroot "useradd -c \"$system_full_name\" -m -s /bin/bash $system_username"
+run_command_chroot "adduser $system_username adm"
+run_command_chroot "adduser $system_username sudo"
+run_command_chroot "passwd $system_username"
+
 log_msg "INFO" "Unmounting chroot dependencies and file system..."
 run_command "sudo umount $chrubuntu_chroot/dev/pts"
 run_command "sudo umount $chrubuntu_chroot/dev/"
 run_command "sudo umount $chrubuntu_chroot/sys"
 run_command "sudo umount $chrubuntu_chroot/proc"
+run_command "sudo umount $chrubuntu_chroot"
+
+log_msg "INFO" "elementary OS installation completed. Press [ENTER] to reboot..."
+read
+run_command "reboot"
