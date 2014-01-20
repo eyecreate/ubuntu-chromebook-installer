@@ -21,11 +21,17 @@ Prerequisites
 Usage
 -----
 
-In order to use this script, you will have to download this file http://URL_TO_SCRIPT/ which will install all the prerequisites to clone this github repository and launch the setup process.
+**ATTENTION: This will wipe everything on your device**
+1. Enable [developer mode](http://www.chromium.org/chromium-os/developer-information-for-chrome-os-devices/acer-c720-chromebook#TOC-Developer-Recovery-Mode) on your device
+2. Download [ChromeeOS v0.1](https://github.com/Setsuna666/elementaryos-chromebook/archive/v0.1.zip) and extract it to a removable media
+3. Boot into ChromeOS, connect to a wireless network and log in as guest
+4. Open a shell CTRL+ALT+t and type `shell`
+5. From the shell go to the location of the script on the removable media `cd /media/removable/NAME_OF_REMOVABLE_MEDIA/`
+6. Run the script with the -d list parameter to list the supported device(s) `sudo bash main.sh -d list`
+7. Run the script with the appropriate manifest for your device `sudo bash main.sh -d DEVICE_MANIFEST` (ex: sudo bash main.sh -d acer-c720)
+8. After the first run, your system will reboot to complete the initial formating, the you will need to re-run the script with the same parameters to complete the installation process
+8. Follow the prompt to complete the installation
 
-1. From a web browser go to http://URL_TO_SCRIPT/ or in a terminal with the command `wget http://URL_TO_SCRIPT/`
-2. Change the permission of the file with the command `chmod +x FILENAME`
-3. As a user, run the script with the command `sh -e ~/Downloads/FILENAME`
 
 Credit(s)
 ---------
