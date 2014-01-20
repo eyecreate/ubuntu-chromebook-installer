@@ -1,7 +1,7 @@
 ChromeeOS - elementary OS installation script for Chromebooks
 ============================================
 
-ChromeeOS will install elementary OS (with ChrUbuntu) and apply automatically all the necessary fixes to run elementary OS on Chromebooks.
+ChromeeOS will install elementary OS (with ChrUbuntu) and apply automatically all the necessary fixes to run elementary OS on Chromebooks. It will allow you to dual-boot ChromeOS and elementary OS on your Chromebook.
 
 Supported device(s)
 -------------------
@@ -30,6 +30,7 @@ Usage
 5. From the shell go to the location of the script on the removable media `cd /media/removable/NAME_OF_REMOVABLE_MEDIA/`
 6. Run the script with the -d list parameter to list the supported device(s) `sudo bash main.sh -d list`
 7. Run the script with the appropriate manifest for your device `sudo bash main.sh -d DEVICE_MANIFEST` (ex: sudo bash main.sh -d acer-c720)
+8. On the first run you will be asked how much storage space you want to dedicate to elementary OS
 8. After the first run, your system will reboot to complete the initial formating, the you will need to re-run the script with the same parameters to complete the installation process
 9. Follow the prompt to complete the installation
 10. After the installation is completed and the Chromebook has rebooted, press CTRL+L to boot into elementary OS
