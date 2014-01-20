@@ -273,11 +273,13 @@ echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > $tmp_dir/resolv.conf
 run_command "sudo mv $tmp_dir/resolv.conf $chrubuntu_chroot/etc/resolv.conf"
 system_partition_uuid=$(sudo blkid $system_partition | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p')
 log_msg "INFO" "Getting UUID from system partition..."
-log_msg "Creating /etc/fstab..."
+log_msg "INFO" "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $chrubuntu_chroot/etc/fstab"
 
-log_msg "INFO" "Configuring locales to English US..."
+log_msg "INFO" "Configuring system language to english and system locales to english US..."
+run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
+run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install language-pack-gnome-en-base language-pack-gnome-en firefox-locale-en wbritish language-pack-en-base language-pack-en"
 run_command_chroot "export LANGUAGE=en_US.UTF-8"
 run_command_chroot "export LANG=en_US.UTF-8"
 run_command_chroot "export LC_ALL=en_US.UTF-8"
