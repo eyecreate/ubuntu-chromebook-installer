@@ -8,7 +8,7 @@ Supported device(s)
 -------------------
 
 * Acer C720
-* HP Chromebook 14 (Untested, but should work with using the acer-c720 manifest)
+* HP Chromebook 14 (Untested, but should work using the acer-c720 manifest)
 
 Prerequisites
 -------------
