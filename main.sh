@@ -181,13 +181,18 @@ log_msg "INFO" "Importing device $device_model manifest..."
 
 #Validating that required variables are defined in the device manifest
 if [ -z "$system_drive" ];then
-  log_msg "ERROR" "System drive variable not defined in device manifest $device_manifest...exiting"
+  log_msg "ERROR" "System drive (system_drive) variable not defined in device manifest $device_manifest...exiting"
   exit 1
 fi
 
 if [ -z "$system_partition" ];then
-  log_msg "ERROR" "System partition variable not defined in device manifest $device_manifest...exiting"
+  log_msg "ERROR" "System partition (system_partition) variable not defined in device manifest $device_manifest...exiting"
   exit 1
+fi
+
+#Verify if the swap file option in specified in the device manifest
+if [ ! -z "$swap_file_size" ];then 
+    log_msg "ERROR" "Swap file size (swap_file_size) variable is not defined in device manifest $device_manifest...exiting"
 fi
 
 if [ ! -e "$system_drive" ];then
@@ -294,12 +299,9 @@ if [ -e "$chroot_dir_scripts" ];then
   done
 fi
 
-#Verify if the swap file option in specified in the device manifest
-if [ ! -z "$swap_file_size" ];then 
-  log_msg "INFO" "Creating swap file..."
-  run_command_chroot "dd if=/dev/zero of=/swap.img bs=1M count=$swap_file_size"
-  run_command_chroot "mkswap /swap.img"
-fi
+log_msg "INFO" "Creating swap file..."
+run_command_chroot "dd if=/dev/zero of=/swap.img bs=1M count=$swap_file_size"
+run_command_chroot "mkswap /swap.img"
 
 log_msg "INFO" "Applying fixes for elementary OS..."
 run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
