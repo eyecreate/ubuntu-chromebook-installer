@@ -83,7 +83,9 @@ log_msg(){
         msg="$2"
         log_format="$(date +%Y-%m-%dT%H:%M:%S) $debug_level $msg"
         echo "$log_format" >> "$log_dir/$log_file"
-        debug_msg "$debug_level" "$msg"
+        if [ "$debug_level" != "COMMAND" ];then
+          debug_msg "$debug_level" "$msg"
+        fi
     else
         debug_msg "ERROR" "Log directory $log_dir does not exist...exiting"
         exit 1
@@ -92,8 +94,8 @@ log_msg(){
 
 run_command(){
     command="$1"
+    log_msg "COMMAND" "$command"
     cmd_output=$($command 2>&1)
-    log_msg "COMMAND" "running: $command" 
     if [ "$cmd_output" != "" ];then
         log_msg "COMMAND" "output: $cmd_output"
     fi
@@ -101,10 +103,12 @@ run_command(){
 
 run_command_chroot(){
   command="$1"
-  log_msg "COMMAND" "running: $command"
-  sudo chroot $chrubuntu_chroot /bin/bash -c "$command"
+  log_msg "COMMAND" "$command"
+  cmd_output=$(sudo chroot $chrubuntu_chroot /bin/bash -c "$command" 2>&1)
+  if [ "$cmd_output" != "" ];then
+    log_msg "COMMAND" "output: $cmd_output"
+  fi
 }
-
 
 #Get command line arguments
 #Required arguments
@@ -218,7 +222,7 @@ else
       log_msg "INFO" "elementary OS system files are already downloaded...skipping"
 fi
 
-log_msg "INFO" "Validation elementary OS system files archive md5sum..."
+log_msg "INFO" "Validating elementary OS system files archive md5sum..."
 eos_sys_archive_dl_md5=$(md5sum $eos_sys_archive | awk '{print $1}')
 
 #MD5 validation of eOS system files archive
@@ -280,13 +284,9 @@ run_command_chroot "export LC_ALL=en_US.UTF-8"
 run_command_chroot "locale-gen en_US.UTF-8"
 run_command_chroot "dpkg-reconfigure locales"
 
-log_msg "INFO" "Installing and updating grub to $system_drive..."
-run_command_chroot "grub-install $system_drive --force"
-run_command_chroot "update-grub"
-
 log_msg "INFO" "Installing elementary OS updates..."
-run_command_chroot "apt-get update"
-run_command_chroot "apt-get -y upgrade"
+run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
+run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q upgrade"
 
 #Device manifest validation for the installation ofkernel packages from an URL
 if [ ! -z "$kernel_url_pkgs" ];then
@@ -305,8 +305,8 @@ if [ ! -z "$ppa_pkgs" ];then
   ppa_pkgs_array=($ppa_pkgs)
   log_msg "INFO" "Installing packages from PPA..."
   for ppa_pkg in "${ppa_pkgs_array[@]}";do
-    run_command_chroot "apt-get update"
-    run_command_chroot "apt-get -y install $ppa_pkg"
+    run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
+    run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install $ppa_pkg"
   done
 fi
 
@@ -327,7 +327,8 @@ log_msg "INFO" "Applying fixes for elementary OS..."
 run_command_chroot "chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem"
-run_command_chroot "chmod 777 /tmp/"
+run_command_chroot "rm -rf /tmp/*"
+run_command_chroot "chmod -R 777 /tmp/"
 
 log_msg "INFO" "Create a user profile for your system..."
 read -p "Enter your computer name: " system_computer_name
@@ -336,11 +337,19 @@ read -p "Enter your username: " system_username
 run_command_chroot "useradd -c \"$system_full_name\" -m -s /bin/bash $system_username"
 run_command_chroot "adduser $system_username adm"
 run_command_chroot "adduser $system_username sudo"
-run_command_chroot "passwd $system_username"
+sudo chroot $chrubuntu_chroot /bin/bash -c "passwd $system_username"
 
 log_msg "INFO" "Creating /etc/hosts file..."
 echo -e "127.0.0.1  localhost\n127.0.1.1  $system_computer_name\n# The following lines are desirable for IPv6 capable hosts\n::1     ip6-localhost ip6-loopback\nfe00::0 ip6-localnet\nff00::0 ip6-mcastprefix\nff02::1 ip6-allnodes\nff02::2 ip6-allrouters" > $tmp_dir/hosts
 run_command "sudo mv $tmp_dir/hosts $chrubuntu_chroot/etc/hosts"
+
+log_msg "INFO" "Creating /etc/hostname file..."
+echo -e "$system_computer_name" > $tmp_dir/hostname
+run_command "sudo mv $tmp_dir/hostname $chrubuntu_chroot/etc/hostname"
+
+log_msg "INFO" "Installing and updating grub to $system_drive..."
+run_command_chroot "grub-install $system_drive --force"
+run_command_chroot "update-grub"
 
 log_msg "INFO" "Unmounting chroot dependencies and file system..."
 run_command "sudo umount $chrubuntu_chroot/dev/pts"
