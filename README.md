@@ -14,7 +14,7 @@ Prerequisites
 
 * A Chromebook which is listed in the supported device(s) section
 * A recovery image for you Chromebook in case something goes wrong
-* Enabled developer mode
+* Chromebook in developer mode
 * An external media of at least 1GB (USB Flash drive or SD Card)
 * Patience
 
