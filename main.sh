@@ -273,6 +273,13 @@ log_msg "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $chrubuntu_chroot/etc/fstab"
 
+log_msg "INFO" "Configuring locales to English US..."
+run_command_chroot "export LANGUAGE=en_US.UTF-8"
+run_command_chroot "export LANG=en_US.UTF-8"
+run_command_chroot "export LC_ALL=en_US.UTF-8"
+run_command_chroot "locale-gen en_US.UTF-8"
+run_command_chroot "dpkg-reconfigure locales"
+
 log_msg "INFO" "Installing and updating grub to $system_drive..."
 run_command_chroot "grub-install $system_drive --force"
 run_command_chroot "update-grub"
@@ -319,17 +326,21 @@ run_command_chroot "mkswap /swap.img"
 log_msg "INFO" "Applying fixes for elementary OS..."
 run_command_chroot "chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
-run_command_chroot "chmod 777 /tmp/"
 run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem"
-
+run_command_chroot "chmod 777 /tmp/"
 
 log_msg "INFO" "Create a user profile for your system..."
+read -p "Enter your computer name: " system_computer_name
 read -p "Enter your full name: " system_full_name
 read -p "Enter your username: " system_username
 run_command_chroot "useradd -c \"$system_full_name\" -m -s /bin/bash $system_username"
 run_command_chroot "adduser $system_username adm"
 run_command_chroot "adduser $system_username sudo"
 run_command_chroot "passwd $system_username"
+
+log_msg "INFO" "Creating /etc/hosts file..."
+echo -e "127.0.0.1  localhost\n127.0.1.1  $system_computer_name\n# The following lines are desirable for IPv6 capable hosts\n::1     ip6-localhost ip6-loopback\nfe00::0 ip6-localnet\nff00::0 ip6-mcastprefix\nff02::1 ip6-allnodes\nff02::2 ip6-allrouters" > $tmp_dir/hosts
+run_command "sudo mv $tmp_dir/hosts $chrubuntu_chroot/etc/hosts"
 
 log_msg "INFO" "Unmounting chroot dependencies and file system..."
 run_command "sudo umount $chrubuntu_chroot/dev/pts"

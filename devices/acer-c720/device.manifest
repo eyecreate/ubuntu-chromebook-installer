@@ -22,5 +22,5 @@ kernel_url_pkgs="http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/li
 #additional_ppa=""
 
 #Add packages from a PPA
-ppa_pkgs="xserver-xorg-lts-raring"
+ppa_pkgs="xserver-xorg-lts-raring xbindkeys xdotool xbacklight"
 
