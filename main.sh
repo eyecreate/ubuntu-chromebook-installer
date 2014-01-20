@@ -4,6 +4,7 @@
 #Variables definition
 #Script variables
 current_dir="$(dirname $BASH_SOURCE)"
+verbose=0
 
 #Script global directory variables
 log_file="elementary-install.log"
@@ -43,6 +44,7 @@ ChromeeOS - elmentary OS installation script for Chromebooks
     OPTIONS:
     -h      Show help
     -d      Specify a device or an action
+    -v      Enable verbose mode
 
     DEVICE:
         The device manifest to load for your Chromebook
@@ -80,7 +82,7 @@ log_msg(){
         debug_level="$1"
         msg="$2"
         log_format="$(date +%Y-%m-%dT%H:%M:%S) $debug_level $msg"
-        echo "$log_format" >> "$log_dir/$log_file"    
+        echo "$log_format" >> "$log_dir/$log_file"
         debug_msg "$debug_level" "$msg"
     else
         debug_msg "ERROR" "Log directory $log_dir does not exist...exiting"
@@ -91,7 +93,7 @@ log_msg(){
 run_command(){
     command="$1"
     cmd_output=$($command 2>&1)
-    log_msg "COMMAND" "running: $command"
+    log_msg "COMMAND" "running: $command" 
     if [ "$cmd_output" != "" ];then
         log_msg "COMMAND" "output: $cmd_output"
     fi
@@ -116,6 +118,9 @@ while getopts "hd:" option; do
             ;;
         d)
             device_model="$OPTARG"
+            ;;
+        v)
+            verbose=1
             ;;
         ?)
             usage
@@ -231,11 +236,15 @@ run_command "tar -xvf $eos_sys_archive -C $chrubuntu_chroot"
 if [ -e "$sys_files_dir" ];then
   log_msg "INFO" "Copying global system files to $chrubuntu_chroot..."
   run_command "sudo cp -Rvu $sys_files_dir/. $chrubuntu_chroot"
+else
+  log_msg "INFO" "No global system files found...skipping"
 fi
 
 if [ -e "$device_sys_files_dir" ];then
   log_msg "INFO" "Copying device system files to $chrubuntu_chroot..."
   run_command "sudo cp -Rvu $device_sys_files_dir/. $chrubuntu_chroot"
+else
+  log_msg "INFO" "No device system files found...skipping"
 fi
 
 if [ -e "$device_scripts_dir" ];then
@@ -244,6 +253,8 @@ if [ -e "$device_scripts_dir" ];then
   log_msg "INFO" "Copying device scripts to $chroot_dir_scripts..."
   run_command "mkdir -p $chroot_dir_scripts"
   run_command "sudo cp -Rvu $device_scripts_dir/. $chroot_dir_scripts"
+else
+  log_msg "INFO" "No device scripts found...skipping"
 fi
 
 log_msg "INFO" "Mounting dependencies for the chroot..."
@@ -284,7 +295,7 @@ fi
 #Device manifest validation for the installation additional packages from PPA
 if [ ! -z "$ppa_pkgs" ];then
   ppa_pkgs_array=($ppa_pkgs)
-  log_msg "INFO" "Installing packages from PPA...""
+  log_msg "INFO" "Installing packages from PPA..."
   for ppa_pkg in "${ppa_pkgs_array[@]}";do
     run_command_chroot "apt-get update"
     run_command_chroot "apt-get -y install $ppa_pkg"
@@ -295,7 +306,7 @@ fi
 if [ -e "$chroot_dir_scripts" ];then
   log_msg "INFO" "Executing device scripts..."
   for i in $(cd $chroot_dir_scripts; ls);do 
-    run_command_chroot "/bin/bash -c $scripts_dir/${i%%/}"
+    run_command_chroot "$scripts_dir/${i%%/}"
   done
 fi
 
@@ -304,7 +315,13 @@ run_command_chroot "dd if=/dev/zero of=/swap.img bs=1M count=$swap_file_size"
 run_command_chroot "mkswap /swap.img"
 
 log_msg "INFO" "Applying fixes for elementary OS..."
-run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
+run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "chmod 777 /tmp/"
 run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem"
+
+log_msg "INFO" "Unmounting chroot dependencies and file system..."
+run_command "sudo umount $chrubuntu_chroot/dev/pts"
+run_command "sudo umount $chrubuntu_chroot/dev/"
+run_command "sudo umount $chrubuntu_chroot/sys"
+run_command "sudo umount $chrubuntu_chroot/proc"
