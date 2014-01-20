@@ -140,7 +140,7 @@ case "$device_model" in
         device_manifest="$devices_dir/$device_model/$dev_manifest_file"
         device_scripts_dir="$devices_dir/$device_model/scripts/"
         device_files_dir="$devices_dir/$device_model/files/"
-        device_sys_files_dir="$devices_files_dir/system/"
+        device_sys_files_dir="$device_files_dir/system/"
         if [ -z "$device_model" ]; then
             debug_msg "WARNING" "Device not specified...exiting"
             usage
@@ -306,7 +306,8 @@ fi
 #Verification for the chroot scripts directory
 if [ -e "$chroot_dir_scripts" ];then
   log_msg "INFO" "Executing device scripts..."
-  for i in $(cd $chroot_dir_scripts; ls);do 
+  for i in $(cd $chroot_dir_scripts; ls);do
+    run_command_chroot "chmod a+x $scripts_dir/${i%%/}"
     run_command_chroot "/bin/bash -c $scripts_dir/${i%%/}"
   done
 fi
@@ -323,8 +324,8 @@ run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem
 
 
 log_msg "INFO" "Create a user profile for your system..."
-read -p "Enter your full name:" system_full_name
-read -p "Enter your username:" system_username
+read -p "Enter your full name: " system_full_name
+read -p "Enter your username: " system_username
 run_command_chroot "useradd -c \"$system_full_name\" -m -s /bin/bash $system_username"
 run_command_chroot "adduser $system_username adm"
 run_command_chroot "adduser $system_username sudo"
