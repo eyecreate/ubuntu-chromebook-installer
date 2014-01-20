@@ -213,7 +213,7 @@ fi
 
 log_msg "INFO" "Downloading elementary OS system files..."
 if [ ! -e "$eos_sys_archive" ];then
-      run_command "curl -o '$eos_sys_archive' -L -O $eos_sys_archive_url"
+      curl -o '$eos_sys_archive' -L -O $eos_sys_archive_url
 else
       log_msg "INFO" "elementary OS system files are already downloaded...skipping"
 fi
