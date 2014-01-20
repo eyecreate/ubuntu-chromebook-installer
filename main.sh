@@ -139,7 +139,7 @@ case "$device_model" in
     *)
         device_manifest="$devices_dir/$device_model/$dev_manifest_file"
         device_scripts_dir="$devices_dir/$device_model/scripts/"
-        device_files_dir="$device_dir/$device_model/files/"
+        device_files_dir="$devices_dir/$device_model/files/"
         device_sys_files_dir="$devices_files_dir/system/"
         if [ -z "$device_model" ]; then
             debug_msg "WARNING" "Device not specified...exiting"
@@ -196,8 +196,9 @@ if [ -z "$system_partition" ];then
 fi
 
 #Verify if the swap file option in specified in the device manifest
-if [ ! -z "$swap_file_size" ];then 
+if [ -z "$swap_file_size" ];then 
     log_msg "ERROR" "Swap file size (swap_file_size) variable is not defined in device manifest $device_manifest...exiting"
+    exit 1
 fi
 
 if [ ! -e "$system_drive" ];then
