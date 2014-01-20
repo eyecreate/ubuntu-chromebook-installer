@@ -32,7 +32,7 @@ Usage
 7. Run the script with the appropriate manifest for your device `sudo bash main.sh -d DEVICE_MANIFEST` (ex: sudo bash main.sh -d acer-c720)
 8. After the first run, your system will reboot to complete the initial formating, the you will need to re-run the script with the same parameters to complete the installation process
 9. Follow the prompt to complete the installation
-
+10. After the installation is completed and the Chromebook has rebooted, press CTRL+L to boot into elementary OS
 
 Credit(s)
 ---------
