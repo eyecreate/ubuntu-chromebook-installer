@@ -22,6 +22,7 @@ Usage
 -----
 
 **ATTENTION: This will wipe everything on your device**
+
 1. Enable [developer mode](http://www.chromium.org/chromium-os/developer-information-for-chrome-os-devices/acer-c720-chromebook#TOC-Developer-Recovery-Mode) on your device
 2. Download [ChromeeOS v0.1](https://github.com/Setsuna666/elementaryos-chromebook/archive/v0.1.zip) and extract it to a removable media
 3. Boot into ChromeOS, connect to a wireless network and log in as guest
@@ -30,7 +31,7 @@ Usage
 6. Run the script with the -d list parameter to list the supported device(s) `sudo bash main.sh -d list`
 7. Run the script with the appropriate manifest for your device `sudo bash main.sh -d DEVICE_MANIFEST` (ex: sudo bash main.sh -d acer-c720)
 8. After the first run, your system will reboot to complete the initial formating, the you will need to re-run the script with the same parameters to complete the installation process
-8. Follow the prompt to complete the installation
+9. Follow the prompt to complete the installation
 
 
 Credit(s)
