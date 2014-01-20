@@ -25,7 +25,7 @@ dev_manifest_file="device.manifest"
 #ChrUbuntu configuration file
 chrubuntu_script="$scripts_dir/chrubuntu-chromeeos.sh"
 chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
-chrubuntu_chroot="/tmp/urfs"
+chrubuntu_chroot="/tmp/urfs/"
 
 #elementary OS specific requirements
 #A tar.gz version of elementary OS ISO (elementaryos-stable-amd64.20130810.iso) squashfs content 
@@ -223,10 +223,6 @@ fi
 log_msg "INFO" "Installing elementary OS system files to $chrubuntu_chroot..."
 run_command "tar -xvf $eos_sys_archive -C $chrubuntu_chroot"
 
-log_msg "INFO" "Applying fixes for elementary OS..."
-run_command "sudo chmod u+s $chrubuntu_chroot/usr/lib/dbus-1.0/dbus-daemon-launch-helper"
-run_command "sudo chmod 777 $chrubuntu_chroot/tmp/"
-
 if [ -e "$sys_files_dir" ];then
   log_msg "INFO" "Copying global system files to $chrubuntu_chroot..."
   run_command "sudo cp -Rvu $sys_files_dir/. $chrubuntu_chroot"
@@ -304,3 +300,9 @@ if [ ! -z "$swap_file_size" ];then
   run_command_chroot "dd if=/dev/zero of=/swap.img bs=1M count=$swap_file_size"
   run_command_chroot "mkswap /swap.img"
 fi
+
+log_msg "INFO" "Applying fixes for elementary OS..."
+run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
+run_command_chroot "chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
+run_command_chroot "chmod 777 /tmp/"
+run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem"
