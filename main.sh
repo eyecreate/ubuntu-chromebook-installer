@@ -325,10 +325,11 @@ log_msg "INFO" "Creating swap file..."
 run_command_chroot "dd if=/dev/zero of=/swap.img bs=1M count=$swap_file_size"
 run_command_chroot "mkswap /swap.img"
 
-log_msg "INFO" "Applying fixes for elementary OS..."
+log_msg "INFO" "Finishing configuration for elementary OS..."
 run_command_chroot "chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem"
+run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q remove gparted"
 run_command_chroot "rm -rf /tmp/*"
 run_command_chroot "chmod -R 777 /tmp/"
 
@@ -336,7 +337,7 @@ log_msg "INFO" "Configuring DNS server using Google DNS servers..."
 echo -e "127.0.0.1  localhost\n127.0.1.1  $system_computer_name\n# The following lines are desirable for IPv6 capable hosts\n::1     ip6-localhost ip6-loopback\nfe00::0 ip6-localnet\nff00::0 ip6-mcastprefix\nff02::1 ip6-allnodes\nff02::2 ip6-allrouters" > $tmp_dir/hosts
 run_command "sudo mv $tmp_dir/hosts $system_chroot/etc/hosts"
 
-log_msg "INFO" "Installing and enabling OEM config for user and system configuration on first boot"
+log_msg "INFO" "Enabling user and system configuration on first boot..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install oem-config"
 run_command_chroot "touch /var/lib/oem-config/run"
