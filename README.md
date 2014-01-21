@@ -29,7 +29,7 @@ Usage
 2. Download the latest pre-release of [ChromeeOS v0.2](https://github.com/Setsuna666/elementaryos-chromebook/archive/v0.2.zip) and extract it to a removable media
 3. Boot into ChromeOS, connect to a wireless network and log in as guest
 4. Open a shell (CTRL + ALT + t) and type `shell`
-5. From the shell go to the location of the script on the removable media `cd /media/removable/` and press **TAB TAB** on your keyboard to show and auto-complete your removable media path automatically
+5. From the shell go to the location of the script on the removable media `cd /media/removable/` and press **[TAB] [TAB]** on your keyboard to show and auto-complete your removable media path automatically
 6. Run the script with the -d list parameter to list the supported device(s) `sudo bash main.sh -d list`
 7. Run the script with the appropriate manifest for your device `sudo bash main.sh -d DEVICE_PROFILE` (ex: sudo bash main.sh -d acer-c720)
 8. On the first run you will be asked how much storage space you want to dedicate to elementary OS
