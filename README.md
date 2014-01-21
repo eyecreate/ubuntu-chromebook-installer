@@ -31,11 +31,12 @@ Usage
 4. Open a shell (CTRL + ALT + t) and type `shell`
 5. From the shell go to the location of the script on the removable media `cd /media/removable/` and press **TAB TAB** on your keyboard to show and auto-complete your removable media path automatically
 6. Run the script with the -d list parameter to list the supported device(s) `sudo bash main.sh -d list`
-7. Run the script with the appropriate manifest for your device `sudo bash main.sh -d DEVICE_MANIFEST` (ex: sudo bash main.sh -d acer-c720)
+7. Run the script with the appropriate manifest for your device `sudo bash main.sh -d DEVICE_PROFILE` (ex: sudo bash main.sh -d acer-c720)
 8. On the first run you will be asked how much storage space you want to dedicate to elementary OS
 8. After the first run, your system will reboot to complete the initial formating, then you will need to re-run the script with the same parameters to complete the installation process
 9. Follow the prompt to complete the installation
 10. After the installation is completed and the Chromebook has rebooted, press CTRL+L to boot into elementary OS
+11. On first boot you will be asked to complete your system configuration (Language, Time zone, Computer name) and create a user account
 
 Credit(s)
 ---------
