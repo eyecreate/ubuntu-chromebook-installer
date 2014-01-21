@@ -1,4 +1,4 @@
-#elementary OS manifest for the Acer C720 Chromebook
+#elementary OS device profile for the Acer C720 Chromebook
 
 #Devices hardware
 system_drive="/dev/sda"
@@ -8,9 +8,10 @@ system_partition="${system_drive}7"
 swap_file_size="2048"
 
 #Define additional PPA and packages to install
+
 #Kernel package(s) to install
 #Add kernel ppa for this device (Not available yet)
-#kernel_ppa=""
+#additional_kernel_ppa=""
 #Add kernel packages from a PPA (Not available yet)
 #kernel_ppa_pkgs=""
 

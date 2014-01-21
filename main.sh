@@ -19,14 +19,14 @@ user_files_dir="$files_dir/user/"
 web_dl_dir="$tmp_dir/web_dl/"
 
 #Device specific variables
-device_manifest="none"
-dev_manifest_file="device.manifest"
+device_profile="none"
+dev_profile_file="device.profile"
 
 #External depenencies variables 
 #ChrUbuntu configuration file
 chrubuntu_script="$scripts_dir/chrubuntu-chromeeos.sh"
 chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
-chrubuntu_chroot="/tmp/urfs/"
+system_chroot="/tmp/urfs/"
 
 #elementary OS specific requirements
 #A tar.gz version of elementary OS ISO (elementaryos-stable-amd64.20130810.iso) squashfs content 
@@ -37,20 +37,20 @@ eos_sys_archive_md5="b619ff3a341421d422e07b34d54c239e"
 #Functions definition
 usage(){
 cat << EOF
-usage: $0 -d [ DEVICE|ACTION ] [ OPTIONS ]
+usage: $0 -d [ DEVICE_PROFILE|ACTION ] [ OPTIONS ]
       
 ChromeeOS - elmentary OS installation script for Chromebooks
 
     OPTIONS:
     -h      Show help
-    -d      Specify a device or an action
+    -d      Specify a device profile to load or an action
     -v      Enable verbose mode
 
-    DEVICE:
-        The device manifest to load for your Chromebook
+    DEVICE_PROFILE:
+        The device profile to load for your Chromebook
 
-    ACTION:
-        list    List all the elements for this specific options (ex: List all devices model supported"
+    ACTIONS:
+        list    List all the elements for this option (ex: List all devices profile supported)"
 EOF
 }
 
@@ -104,7 +104,7 @@ run_command(){
 run_command_chroot(){
   command="$1"
   log_msg "COMMAND" "$command"
-  cmd_output=$(sudo chroot $chrubuntu_chroot /bin/bash -c "$command" 2>&1)
+  cmd_output=$(sudo chroot $system_chroot /bin/bash -c "$command" 2>&1)
   if [ "$cmd_output" != "" ];then
     log_msg "COMMAND" "output: $cmd_output"
   fi
@@ -136,12 +136,12 @@ done
 #Validate device model
 case "$device_model" in
     list) 
-        debug_msg "INFO" "List of supported devices..."
+        debug_msg "INFO" "ChromeeOS - List of device profile for supported devices..."
         for i in $(cd $devices_dir; ls -d */); do echo "- ${i%%/}"; done
         exit 0
         ;;
     *)
-        device_manifest="$devices_dir/$device_model/$dev_manifest_file"
+        device_profile="$devices_dir/$device_model/$dev_profile_file"
         device_scripts_dir="$devices_dir/$device_model/scripts/"
         device_files_dir="$devices_dir/$device_model/files/"
         device_sys_files_dir="$device_files_dir/system/"
@@ -149,8 +149,8 @@ case "$device_model" in
             debug_msg "WARNING" "Device not specified...exiting"
             usage
             exit 1
-        elif [ ! -e "$device_manifest" ];then
-            debug_msg "WARNING" "Device '$device_model' manifest does not exist...exiting"
+        elif [ ! -e "$device_profile" ];then
+            debug_msg "WARNING" "Device '$device_model' profile does not exist...exiting"
             usage
             exit 1
         fi
@@ -185,23 +185,23 @@ else
       sudo bash $chrubuntu_script
 fi
 
-log_msg "INFO" "Importing device $device_model manifest..."
-. $device_manifest
+log_msg "INFO" "Importing device $device_model profile..."
+. $device_profile
 
-#Validating that required variables are defined in the device manifest
+#Validating that required variables are defined in the device profile
 if [ -z "$system_drive" ];then
-  log_msg "ERROR" "System drive (system_drive) variable not defined in device manifest $device_manifest...exiting"
+  log_msg "ERROR" "System drive (system_drive) variable not defined in device profile $device_profile...exiting"
   exit 1
 fi
 
 if [ -z "$system_partition" ];then
-  log_msg "ERROR" "System partition (system_partition) variable not defined in device manifest $device_manifest...exiting"
+  log_msg "ERROR" "System partition (system_partition) variable not defined in device profile $device_profile...exiting"
   exit 1
 fi
 
-#Verify if the swap file option in specified in the device manifest
+#Verify if the swap file option in specified in the device profile
 if [ -z "$swap_file_size" ];then 
-    log_msg "ERROR" "Swap file size (swap_file_size) variable is not defined in device manifest $device_manifest...exiting"
+    log_msg "ERROR" "Swap file size (swap_file_size) variable is not defined in device profile $device_profile...exiting"
     exit 1
 fi
 
@@ -235,26 +235,26 @@ else
       log_msg "INFO" "elementary OS system files archive MD5 match...continuing"
 fi
 
-log_msg "INFO" "Installing elementary OS system files to $chrubuntu_chroot..."
-run_command "tar -xvf $eos_sys_archive -C $chrubuntu_chroot"
+log_msg "INFO" "Installing elementary OS system files to $system_chroot..."
+run_command "tar -xvf $eos_sys_archive -C $system_chroot"
 
 if [ -e "$sys_files_dir" ];then
-  log_msg "INFO" "Copying global system files to $chrubuntu_chroot..."
-  run_command "sudo cp -Rvu $sys_files_dir/. $chrubuntu_chroot"
+  log_msg "INFO" "Copying global system files to $system_chroot..."
+  run_command "sudo cp -Rvu $sys_files_dir/. $system_chroot"
 else
   log_msg "INFO" "No global system files found...skipping"
 fi
 
 if [ -e "$device_sys_files_dir" ];then
-  log_msg "INFO" "Copying device system files to $chrubuntu_chroot..."
-  run_command "sudo cp -Rvu $device_sys_files_dir/. $chrubuntu_chroot"
+  log_msg "INFO" "Copying device system files to $system_chroot..."
+  run_command "sudo cp -Rvu $device_sys_files_dir/. $system_chroot"
 else
   log_msg "INFO" "No device system files found...skipping"
 fi
 
 if [ -e "$device_scripts_dir" ];then
   scripts_dir="/tmp/scripts/"
-  chroot_dir_scripts="$chrubuntu_chroot/tmp/scripts/"
+  chroot_dir_scripts="$system_chroot/tmp/scripts/"
   log_msg "INFO" "Copying device scripts to $chroot_dir_scripts..."
   run_command "mkdir -p $chroot_dir_scripts"
   run_command "sudo cp -Rvu $device_scripts_dir/. $chroot_dir_scripts"
@@ -263,19 +263,19 @@ else
 fi
 
 log_msg "INFO" "Mounting dependencies for the chroot..."
-run_command "sudo mount -o bind /dev/ $chrubuntu_chroot/dev/"
-run_command "sudo mount -o bind /dev/pts $chrubuntu_chroot/dev/pts"
-run_command "sudo mount -o bind /sys/ $chrubuntu_chroot/sys/"
-run_command "sudo mount -o bind /proc/ $chrubuntu_chroot/proc/"
+run_command "sudo mount -o bind /dev/ $system_chroot/dev/"
+run_command "sudo mount -o bind /dev/pts $system_chroot/dev/pts"
+run_command "sudo mount -o bind /sys/ $system_chroot/sys/"
+run_command "sudo mount -o bind /proc/ $system_chroot/proc/"
 
 log_msg "INFO" "Creating /etc/resolv.conf..."
 echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > $tmp_dir/resolv.conf
-run_command "sudo mv $tmp_dir/resolv.conf $chrubuntu_chroot/etc/resolv.conf"
+run_command "sudo mv $tmp_dir/resolv.conf $system_chroot/etc/resolv.conf"
 system_partition_uuid=$(sudo blkid $system_partition | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p')
 log_msg "INFO" "Getting UUID from system partition..."
 log_msg "INFO" "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
-run_command "sudo mv $tmp_dir/fstab $chrubuntu_chroot/etc/fstab"
+run_command "sudo mv $tmp_dir/fstab $system_chroot/etc/fstab"
 
 log_msg "INFO" "Configuring system language to english and system locales to english US..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
@@ -290,7 +290,7 @@ log_msg "INFO" "Installing elementary OS updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q upgrade"
 
-#Device manifest validation for the installation ofkernel packages from an URL
+#Device profile validation for the installation ofkernel packages from an URL
 if [ ! -z "$kernel_url_pkgs" ];then
   kernel_url_pkgs_array=($kernel_url_pkgs)
   kernel_dir="/tmp/kernel/"
@@ -302,7 +302,7 @@ if [ ! -z "$kernel_url_pkgs" ];then
   run_command_chroot "dpkg -i $kernel_dir/*.deb"
 fi
 
-#Device manifest validation for the installation additional packages from PPA
+#Device profile validation for the installation additional packages from PPA
 if [ ! -z "$ppa_pkgs" ];then
   ppa_pkgs_array=($ppa_pkgs)
   log_msg "INFO" "Installing packages from PPA..."
@@ -339,26 +339,26 @@ read -p "Enter your username: " system_username
 run_command_chroot "useradd -c \"$system_full_name\" -m -s /bin/bash $system_username"
 run_command_chroot "adduser $system_username adm"
 run_command_chroot "adduser $system_username sudo"
-sudo chroot $chrubuntu_chroot /bin/bash -c "passwd $system_username"
+sudo chroot $system_chroot /bin/bash -c "passwd $system_username"
 
 log_msg "INFO" "Creating /etc/hosts file..."
 echo -e "127.0.0.1  localhost\n127.0.1.1  $system_computer_name\n# The following lines are desirable for IPv6 capable hosts\n::1     ip6-localhost ip6-loopback\nfe00::0 ip6-localnet\nff00::0 ip6-mcastprefix\nff02::1 ip6-allnodes\nff02::2 ip6-allrouters" > $tmp_dir/hosts
-run_command "sudo mv $tmp_dir/hosts $chrubuntu_chroot/etc/hosts"
+run_command "sudo mv $tmp_dir/hosts $system_chroot/etc/hosts"
 
 log_msg "INFO" "Creating /etc/hostname file..."
 echo -e "$system_computer_name" > $tmp_dir/hostname
-run_command "sudo mv $tmp_dir/hostname $chrubuntu_chroot/etc/hostname"
+run_command "sudo mv $tmp_dir/hostname $system_chroot/etc/hostname"
 
 log_msg "INFO" "Installing and updating grub to $system_drive..."
 run_command_chroot "grub-install $system_drive --force"
 run_command_chroot "update-grub"
 
 log_msg "INFO" "Unmounting chroot dependencies and file system..."
-run_command "sudo umount $chrubuntu_chroot/dev/pts"
-run_command "sudo umount $chrubuntu_chroot/dev/"
-run_command "sudo umount $chrubuntu_chroot/sys"
-run_command "sudo umount $chrubuntu_chroot/proc"
-run_command "sudo umount $chrubuntu_chroot"
+run_command "sudo umount $system_chroot/dev/pts"
+run_command "sudo umount $system_chroot/dev/"
+run_command "sudo umount $system_chroot/sys"
+run_command "sudo umount $system_chroot/proc"
+run_command "sudo umount $system_chroot"
 
 log_msg "INFO" "elementary OS installation completed. Press [ENTER] to reboot..."
 read
