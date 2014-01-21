@@ -352,6 +352,7 @@ run_command "sudo umount $system_chroot/sys"
 run_command "sudo umount $system_chroot/proc"
 run_command "sudo umount $system_chroot"
 
-log_msg "INFO" "elementary OS installation completed. Press [ENTER] to reboot..."
+log_msg "INFO" "elementary OS installation completed. On first boot you will be asked to do the initial configuration for your system language, timezone, computer name and user account"
+log_msg "INFO" "Press [ENTER] to reboot..."
 read
 run_command "reboot"
