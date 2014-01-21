@@ -13,7 +13,7 @@ Prerequisites
 -------------
 
 * A Chromebook listed in the supported device(s) section
-* A recovery image for you Chromebook in case something goes wrong (Go to chrome://imageburner on your Chromebook to make one)
+* A recovery image for you Chromebook in case something goes wrong. In order to achieve that, on your Chromebook go to [chrome://imageburner](chrome://imageburner) and follow the instruction
 * Chromebook in developer mode
 * An external media of at least 1GB (USB Flash drive or SD Card)
 * Patience
