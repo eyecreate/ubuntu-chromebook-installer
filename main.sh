@@ -22,7 +22,7 @@ web_dl_dir="$tmp_dir/web_dl/"
 device_profile="none"
 dev_profile_file="device.profile"
 
-#External depenencies variables 
+#External depenencies variables
 #ChrUbuntu configuration file
 chrubuntu_script="$scripts_dir/chrubuntu-chromeeos.sh"
 chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
@@ -277,14 +277,14 @@ log_msg "INFO" "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $system_chroot/etc/fstab"
 
-log_msg "INFO" "Configuring system language to english and system locales to english US..."
-run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
-run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install language-pack-gnome-en-base language-pack-gnome-en firefox-locale-en wbritish language-pack-en-base language-pack-en"
-run_command_chroot "export LANGUAGE=en_US.UTF-8"
-run_command_chroot "export LANG=en_US.UTF-8"
-run_command_chroot "export LC_ALL=en_US.UTF-8"
-run_command_chroot "locale-gen en_US.UTF-8"
-run_command_chroot "dpkg-reconfigure locales"
+#log_msg "INFO" "Configuring system language to english and system locales to english US..."
+#run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
+#run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install language-pack-gnome-en-base language-pack-gnome-en firefox-locale-en wbritish language-pack-en-base language-pack-en"
+#run_command_chroot "export LANGUAGE=en_US.UTF-8"
+#run_command_chroot "export LANG=en_US.UTF-8"
+#run_command_chroot "export LC_ALL=en_US.UTF-8"
+#run_command_chroot "locale-gen en_US.UTF-8"
+#run_command_chroot "dpkg-reconfigure locales"
 
 log_msg "INFO" "Installing elementary OS updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
@@ -332,22 +332,14 @@ run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem
 run_command_chroot "rm -rf /tmp/*"
 run_command_chroot "chmod -R 777 /tmp/"
 
-log_msg "INFO" "Create a user profile for your system..."
-read -p "Enter your computer name: " system_computer_name
-read -p "Enter your full name: " system_full_name
-read -p "Enter your username: " system_username
-run_command_chroot "useradd -c \"$system_full_name\" -m -s /bin/bash $system_username"
-run_command_chroot "adduser $system_username adm"
-run_command_chroot "adduser $system_username sudo"
-sudo chroot $system_chroot /bin/bash -c "passwd $system_username"
-
-log_msg "INFO" "Creating /etc/hosts file..."
+log_msg "INFO" "Configuring DNS server using Google DNS servers..."
 echo -e "127.0.0.1  localhost\n127.0.1.1  $system_computer_name\n# The following lines are desirable for IPv6 capable hosts\n::1     ip6-localhost ip6-loopback\nfe00::0 ip6-localnet\nff00::0 ip6-mcastprefix\nff02::1 ip6-allnodes\nff02::2 ip6-allrouters" > $tmp_dir/hosts
 run_command "sudo mv $tmp_dir/hosts $system_chroot/etc/hosts"
 
-log_msg "INFO" "Creating /etc/hostname file..."
-echo -e "$system_computer_name" > $tmp_dir/hostname
-run_command "sudo mv $tmp_dir/hostname $system_chroot/etc/hostname"
+log_msg "INFO" "Installing and enabling OEM config for user and system configuration on first boot"
+run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
+run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install oem-config"
+run_command_chroot "touch /var/lib/oem-config/run"
 
 log_msg "INFO" "Installing and updating grub to $system_drive..."
 run_command_chroot "grub-install $system_drive --force"
