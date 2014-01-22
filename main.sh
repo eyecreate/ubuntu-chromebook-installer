@@ -37,20 +37,20 @@ eos_sys_archive_md5="b619ff3a341421d422e07b34d54c239e"
 #Functions definition
 usage(){
 cat << EOF
-usage: $0 -d [ DEVICE_PROFILE|ACTION ] [ OPTIONS ]
+usage: $0 [ OPTIONS ] [ DEVICE_PROFILE | ACTION ]
       
 ChromeeOS - elmentary OS installation script for Chromebooks
 
     OPTIONS:
     -h      Show help
-    -d      Specify a device profile to load or an action
     -v      Enable verbose mode
 
     DEVICE_PROFILE:
         The device profile to load for your Chromebook
 
     ACTIONS:
-        list    List all the elements for this option (ex: List all devices profile supported)"
+        list    List all the elements for this option (ex: List all devices profile supported)
+        search  Search for your critera in all devices profile
 EOF
 }
 
@@ -120,9 +120,6 @@ while getopts "hd:" option; do
             usage
             exit 1
             ;;
-        d)
-            device_model="$OPTARG"
-            ;;
         v)
             verbose=1
             ;;
@@ -133,17 +130,37 @@ while getopts "hd:" option; do
     esac
 done
 
+device_model="${BASH_ARGV[0]}"
+device_search="${BASH_ARGV[1]}"
+
+if [ "$device_model" == "search" ];then
+    debug_msg "WARNING" "No search critera entered for device profile search...exiting"
+    usage
+    exit 1
+fi
+
+if [ "$device_search" == "search" ];then
+  search_result=$(sudo /bin/bash $0 list | tail -n +3 | grep -i $device_model)
+  if [ -z "$search_result" ] || [ "$search_result" == "" ];then
+    debug_msg "WARNING" "No device profile found with search critera \"$device_model\""
+  else
+    debug_msg "INFO" "List of device profile matching search critera \"$device_model\""
+    echo $search_result
+  fi
+  exit 1
+fi
+
 #Validate device model
 case "$device_model" in
     list) 
-        debug_msg "INFO" "ChromeeOS - List of device profile for supported devices..."
+        debug_msg "INFO" "List of device profiles for supported devices..."
         for i in $(cd $devices_dir; ls -d */); do echo "- ${i%%/}"; done
         exit 0
         ;;
     *)
         device_profile="$devices_dir/$device_model/$dev_profile_file"
         device_scripts_dir="$devices_dir/$device_model/scripts/"
-        device_files_dir="$devices_dir/$device_model/files/"
+        device_files_dir=sssss"$devices_dir/$device_model/files/"
         device_sys_files_dir="$device_files_dir/system/"
         if [ -z "$device_model" ]; then
             debug_msg "WARNING" "Device not specified...exiting"
@@ -163,7 +180,9 @@ if [ ! -e "$log_dir" ]; then
       mkdir $log_dir
 fi
 
+device_hwid=$(crossystem hwid)
 log_msg "INFO" "Device model is $device_model"
+log_msg "INFO" "Device hardware ID is $device_hwid"
 
 if [ ! -e "$tmp_dir" ]; then
       log_msg "INFO" "Creating and downloading dependencies..."
