@@ -140,14 +140,14 @@ if [ "$device_model" == "search" ];then
 fi
 
 if [ "$device_search" == "search" ];then
-  search_result=$(sudo /bin/bash $0 list | tail -n +3 | grep -i $device_model)
-  if [ -z "$search_result" ] || [ "$search_result" == "" ];then
-    debug_msg "WARNING" "No device profile found with search critera \"$device_model\""
-  else
-    debug_msg "INFO" "List of device profile matching search critera \"$device_model\""
-    echo $search_result
-  fi
-  exit 1
+    search_result=$(sudo /bin/bash $0 list | tail -n +3 | grep -i "$device_model")
+    if [ -z "$search_result" ] || [ "$search_result" == "" ];then
+        debug_msg "WARNING" "No device profile found with search critera \"$device_model\""
+    else
+        debug_msg "INFO" "List of device profile matching search critera \"$device_model\""
+        echo $search_result
+    fi
+    exit 1
 fi
 
 #Validate device model
@@ -177,7 +177,7 @@ esac
 debug_msg "INFO" "ChromeeOS - elementary OS installation script for Chromebooks by Setsuna666 on github Setsuna666/elementaryos-chromebook"
 #Creating log files directory before using the log_msg function
 if [ ! -e "$log_dir" ]; then
-      mkdir $log_dir
+    mkdir $log_dir
 fi
 
 device_hwid=$(crossystem hwid)
@@ -185,23 +185,23 @@ log_msg "INFO" "Device model is $device_model"
 log_msg "INFO" "Device hardware ID is $device_hwid"
 
 if [ ! -e "$tmp_dir" ]; then
-      log_msg "INFO" "Creating and downloading dependencies..."
-      run_command "mkdir $tmp_dir"
+    log_msg "INFO" "Creating and downloading dependencies..."
+    run_command "mkdir $tmp_dir"
 fi
 
 if [ ! -e "$chrubuntu_runonce" ]; then
-      log_msg "INFO" "Running ChrUbuntu to setup partitioning..."
-      sudo bash $chrubuntu_script
-      log_msg "INFO" "ChrUbuntu execution complete..."
-      log_msg "INFO" "System will reboot in 10 seconds..."
-      touch $chrubuntu_runonce
-      sleep 10
-      sudo reboot
-      exit 0
+    log_msg "INFO" "Running ChrUbuntu to setup partitioning..."
+    sudo bash $chrubuntu_script
+    log_msg "INFO" "ChrUbuntu execution complete..."
+    log_msg "INFO" "System will reboot in 10 seconds..."
+    touch $chrubuntu_runonce
+    sleep 10
+    sudo reboot
+    exit 0
 else
-      log_msg "INFO" "ChrUbuntu partitioning already done...skipping"
-      log_msg "INFO" "Running ChrUbuntu to finish the formating process..."
-      sudo bash $chrubuntu_script
+    log_msg "INFO" "ChrUbuntu partitioning already done...skipping"
+    log_msg "INFO" "Running ChrUbuntu to finish the formating process..."
+    sudo bash $chrubuntu_script
 fi
 
 log_msg "INFO" "Importing device $device_model profile..."
@@ -209,13 +209,13 @@ log_msg "INFO" "Importing device $device_model profile..."
 
 #Validating that required variables are defined in the device profile
 if [ -z "$system_drive" ];then
-  log_msg "ERROR" "System drive (system_drive) variable not defined in device profile $device_profile...exiting"
-  exit 1
+    log_msg "ERROR" "System drive (system_drive) variable not defined in device profile $device_profile...exiting"
+    exit 1
 fi
 
 if [ -z "$system_partition" ];then
-  log_msg "ERROR" "System partition (system_partition) variable not defined in device profile $device_profile...exiting"
-  exit 1
+    log_msg "ERROR" "System partition (system_partition) variable not defined in device profile $device_profile...exiting"
+    exit 1
 fi
 
 #Verify if the swap file option in specified in the device profile
@@ -225,20 +225,20 @@ if [ -z "$swap_file_size" ];then
 fi
 
 if [ ! -e "$system_drive" ];then
-  log_msg "ERROR" "System drive $system_drive does not exist...exiting"
-  exit 1
+    log_msg "ERROR" "System drive $system_drive does not exist...exiting"
+    exit 1
 fi
 
 if [ ! -e "$system_partition" ];then
-  log_msg "ERROR" "System drive $system_partition does not exist...exiting"
-  exit 1
+    log_msg "ERROR" "System drive $system_partition does not exist...exiting"
+    exit 1
 fi
 
 log_msg "INFO" "Downloading elementary OS system files..."
 if [ ! -e "$eos_sys_archive" ];then
-      curl -o "$eos_sys_archive" -L -O "$eos_sys_archive_url"
+    curl -o "$eos_sys_archive" -L -O "$eos_sys_archive_url"
 else
-      log_msg "INFO" "elementary OS system files are already downloaded...skipping"
+    log_msg "INFO" "elementary OS system files are already downloaded...skipping"
 fi
 
 log_msg "INFO" "Validating elementary OS system files archive md5sum..."
@@ -246,39 +246,39 @@ eos_sys_archive_dl_md5=$(md5sum $eos_sys_archive | awk '{print $1}')
 
 #MD5 validation of eOS system files archive
 if [ "$eos_sys_archive_md5" != "$eos_sys_archive_dl_md5" ];then
-      log_msg "ERROR" "elementary OS system files archive MD5 does not match...exiting"
-      run_command "rm $eos_sys_archive"
-      log_msg "INFO" "Re-run this script to download the elementary OS system files archive..."
-      exit 1
+    log_msg "ERROR" "elementary OS system files archive MD5 does not match...exiting"
+    run_command "rm $eos_sys_archive"
+    log_msg "INFO" "Re-run this script to download the elementary OS system files archive..."
+    exit 1
 else
-      log_msg "INFO" "elementary OS system files archive MD5 match...continuing"
+  log_msg "INFO" "elementary OS system files archive MD5 match...continuing"
 fi
 
 log_msg "INFO" "Installing elementary OS system files to $system_chroot..."
 run_command "tar -xvf $eos_sys_archive -C $system_chroot"
 
 if [ -e "$sys_files_dir" ];then
-  log_msg "INFO" "Copying global system files to $system_chroot..."
-  run_command "sudo cp -Rvu $sys_files_dir/. $system_chroot"
+    log_msg "INFO" "Copying global system files to $system_chroot..."
+    run_command "sudo cp -Rvu $sys_files_dir/. $system_chroot"
 else
-  log_msg "INFO" "No global system files found...skipping"
+    log_msg "INFO" "No global system files found...skipping"
 fi
 
 if [ -e "$device_sys_files_dir" ];then
-  log_msg "INFO" "Copying device system files to $system_chroot..."
-  run_command "sudo cp -Rvu $device_sys_files_dir/. $system_chroot"
+    log_msg "INFO" "Copying device system files to $system_chroot..."
+    run_command "sudo cp -Rvu $device_sys_files_dir/. $system_chroot"
 else
-  log_msg "INFO" "No device system files found...skipping"
+    log_msg "INFO" "No device system files found...skipping"
 fi
 
 if [ -e "$device_scripts_dir" ];then
-  scripts_dir="/tmp/scripts/"
-  chroot_dir_scripts="$system_chroot/tmp/scripts/"
-  log_msg "INFO" "Copying device scripts to $chroot_dir_scripts..."
-  run_command "mkdir -p $chroot_dir_scripts"
-  run_command "sudo cp -Rvu $device_scripts_dir/. $chroot_dir_scripts"
+    scripts_dir="/tmp/scripts/"
+    chroot_dir_scripts="$system_chroot/tmp/scripts/"
+    log_msg "INFO" "Copying device scripts to $chroot_dir_scripts..."
+    run_command "mkdir -p $chroot_dir_scripts"
+    run_command "sudo cp -Rvu $device_scripts_dir/. $chroot_dir_scripts"
 else
-  log_msg "INFO" "No device scripts found...skipping"
+    log_msg "INFO" "No device scripts found...skipping"
 fi
 
 log_msg "INFO" "Mounting dependencies for the chroot..."
@@ -296,48 +296,39 @@ log_msg "INFO" "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $system_chroot/etc/fstab"
 
-#log_msg "INFO" "Configuring system language to english and system locales to english US..."
-#run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
-#run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install language-pack-gnome-en-base language-pack-gnome-en firefox-locale-en wbritish language-pack-en-base language-pack-en"
-#run_command_chroot "export LANGUAGE=en_US.UTF-8"
-#run_command_chroot "export LANG=en_US.UTF-8"
-#run_command_chroot "export LC_ALL=en_US.UTF-8"
-#run_command_chroot "locale-gen en_US.UTF-8"
-#run_command_chroot "dpkg-reconfigure locales"
-
 log_msg "INFO" "Installing elementary OS updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q upgrade"
 
 #Device profile validation for the installation ofkernel packages from an URL
 if [ ! -z "$kernel_url_pkgs" ];then
-  kernel_url_pkgs_array=($kernel_url_pkgs)
-  kernel_dir="/tmp/kernel/"
-  log_msg "INFO" "Downloading and installing kernel package(s) from URL"
-  run_command_chroot "mkdir $kernel_dir"
-  for kernel_pkg in "${kernel_url_pkgs_array[@]}";do
-    run_command_chroot "wget -P $kernel_dir $kernel_pkg"
-  done
-  run_command_chroot "dpkg -i $kernel_dir/*.deb"
+    kernel_url_pkgs_array=($kernel_url_pkgs)
+    kernel_dir="/tmp/kernel/"
+    log_msg "INFO" "Downloading and installing kernel package(s) from URL"
+    run_command_chroot "mkdir $kernel_dir"
+    for kernel_pkg in "${kernel_url_pkgs_array[@]}";do
+        run_command_chroot "wget -P $kernel_dir $kernel_pkg"
+    done
+    run_command_chroot "dpkg -i $kernel_dir/*.deb"
 fi
 
 #Device profile validation for the installation additional packages from PPA
 if [ ! -z "$ppa_pkgs" ];then
-  ppa_pkgs_array=($ppa_pkgs)
-  log_msg "INFO" "Installing packages from PPA..."
-  for ppa_pkg in "${ppa_pkgs_array[@]}";do
-    run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
-    run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install $ppa_pkg"
-  done
+    ppa_pkgs_array=($ppa_pkgs)
+    log_msg "INFO" "Installing packages from PPA..."
+    for ppa_pkg in "${ppa_pkgs_array[@]}";do
+        run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
+        run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install $ppa_pkg"
+    done
 fi
 
 #Verification for the chroot scripts directory
 if [ -e "$chroot_dir_scripts" ];then
-  log_msg "INFO" "Executing device scripts..."
-  for i in $(cd $chroot_dir_scripts; ls);do
-    run_command_chroot "chmod a+x $scripts_dir/${i%%/}"
-    run_command_chroot "/bin/bash -c $scripts_dir/${i%%/}"
-  done
+    log_msg "INFO" "Executing device scripts..."
+    for i in $(cd $chroot_dir_scripts; ls);do
+        run_command_chroot "chmod a+x $scripts_dir/${i%%/}"
+        run_command_chroot "/bin/bash -c $scripts_dir/${i%%/}"
+    done
 fi
 
 log_msg "INFO" "Creating swap file..."
