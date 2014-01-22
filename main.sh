@@ -322,8 +322,10 @@ if [ -e "$chroot_dir_scripts" ];then
 fi
 
 log_msg "INFO" "Creating swap file..."
-run_command_chroot "dd if=/dev/zero of=/swap.img bs=1M count=$swap_file_size"
+run_command_chroot "fallocate -l $swap_file_size /swap.img"
 run_command_chroot "mkswap /swap.img"
+run_command_chroot "chown root:root /swap.img"
+run_command_chroot "chmod 0600 /swap.img"
 
 log_msg "INFO" "Finishing configuration for elementary OS..."
 run_command_chroot "chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
@@ -333,7 +335,7 @@ run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q remove 
 run_command_chroot "rm -rf /tmp/*"
 run_command_chroot "chmod -R 777 /tmp/"
 
-log_msg "INFO" "Configuring DNS server using Google DNS servers..."
+log_msg "INFO" "Creating hosts file..."
 echo -e "127.0.0.1  localhost\n127.0.1.1  $system_computer_name\n# The following lines are desirable for IPv6 capable hosts\n::1     ip6-localhost ip6-loopback\nfe00::0 ip6-localnet\nff00::0 ip6-mcastprefix\nff02::1 ip6-allnodes\nff02::2 ip6-allrouters" > $tmp_dir/hosts
 run_command "sudo mv $tmp_dir/hosts $system_chroot/etc/hosts"
 
@@ -356,4 +358,4 @@ run_command "sudo umount $system_chroot"
 log_msg "INFO" "elementary OS installation completed. On first boot you will be asked to do the initial configuration for your system language, timezone, computer name and user account"
 log_msg "INFO" "Press [ENTER] to reboot..."
 read
-run_command "reboot"
+run_command "sudo reboot"
