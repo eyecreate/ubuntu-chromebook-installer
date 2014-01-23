@@ -26,7 +26,7 @@ Usage
 **ATTENTION: This is still a pre-release, there could be bugs**
 
 1. Enable [developer mode](http://www.chromium.org/chromium-os/developer-information-for-chrome-os-devices) on your device
-2. Download the latest pre-release of [ChromeeOS v0.2](https://github.com/Setsuna666/elementaryos-chromebook/archive/v0.2.zip) and extract it to a removable media
+2. Download the latest pre-release of [ChromeeOS v0.3](https://github.com/Setsuna666/elementaryos-chromebook/archive/v0.3.zip) and extract it to a removable media
 3. Boot into ChromeOS, connect to a wireless network and log in as guest
 4. Open a shell (CTRL + ALT + t) and type `shell`
 5. From the shell go to the location of the script on the removable media `cd /media/removable/` and press **[TAB] [TAB]** on your keyboard to show and auto-complete your removable media path automatically
