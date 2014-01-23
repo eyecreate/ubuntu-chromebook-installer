@@ -169,9 +169,10 @@ case "$device_model" in
         ;;
     *)
         device_profile="$devices_dir/$device_model/$dev_profile_file"
-        device_scripts_dir="$devices_dir/$device_model/scripts/"
-        device_files_dir="$devices_dir/$device_model/files/"
-        device_sys_files_dir="$device_files_dir/system/"
+        device_profile_dir="$devices_dir/$device_model/"
+        device_scripts_dir="$device_profile_dir/scripts/"
+        device_files_dir="$device_profile_dir/files/"
+        device_sys_dir="$device_files_dir/system/"
         if [ -z "$device_model" ]; then
             debug_msg "WARNING" "Device not specified...exiting"
             usage
@@ -267,16 +268,16 @@ fi
 log_msg "INFO" "Installing elementary OS system files to $system_chroot..."
 run_command "tar -xvf $eos_sys_archive -C $system_chroot"
 
-if [ -e "$sys_files_dir" ];then
+if [ -e "$default_sys_dir" ];then
     log_msg "INFO" "Copying global system files to $system_chroot..."
-    run_command "sudo cp -Rvu $sys_files_dir/. $system_chroot"
+    run_command "sudo cp -Rvu $default_sys_dir/. $system_chroot"
 else
     log_msg "INFO" "No global system files found...skipping"
 fi
 
-if [ -e "$device_sys_files_dir" ];then
+if [ -e "$device_sys_dir" ];then
     log_msg "INFO" "Copying device system files to $system_chroot..."
-    run_command "sudo cp -Rvu $device_sys_files_dir/. $system_chroot"
+    run_command "sudo cp -Rvu $device_sys_dir/. $system_chroot"
 else
     log_msg "INFO" "No device system files found...skipping"
 fi
