@@ -11,12 +11,22 @@ log_file="elementary-install.log"
 log_dir="$current_dir/logs/"
 tmp_dir="$current_dir/tmp/"
 conf_dir="$current_dir/conf.d/"
-devices_dir="$current_dir/devices/"
-files_dir="$current_dir/files/"
+profiles_dir="$current_dir/profiles/"
+devices_dir="$profiles_dir/devices/"
 scripts_dir="$current_dir/scripts/"
-sys_files_dir="$files_dir/system/"
-user_files_dir="$files_dir/user/"
 web_dl_dir="$tmp_dir/web_dl/"
+
+#Default profile
+default_profile_file="default.profile"
+default_profile_dir="$profiles_dir/default/"
+default_sys_dir="$default_profile_dir/system/"
+default_scripts_dir="$default_profile_dir/scripts/"
+
+#User profile
+user_profile_file="user.profile"
+user_profile_dir="$profiles_dir/user/"
+user_sys_dir="$user_profile_dir/user/system/"
+user_scripts_dir="$user_profile_dir/scripts/"
 
 #Device specific variables
 device_profile="none"
@@ -140,7 +150,7 @@ if [ "$device_model" == "search" ];then
 fi
 
 if [ "$device_search" == "search" ];then
-    search_result=$(sudo /bin/bash $0 list | tail -n +3 | grep -i "$device_model")
+    search_result=$(/bin/bash $0 list | tail -n +3 | grep -i "$device_model")
     if [ -z "$search_result" ] || [ "$search_result" == "" ];then
         debug_msg "WARNING" "No device profile found with search critera \"$device_model\""
     else
@@ -160,7 +170,7 @@ case "$device_model" in
     *)
         device_profile="$devices_dir/$device_model/$dev_profile_file"
         device_scripts_dir="$devices_dir/$device_model/scripts/"
-        device_files_dir=sssss"$devices_dir/$device_model/files/"
+        device_files_dir="$devices_dir/$device_model/files/"
         device_sys_files_dir="$device_files_dir/system/"
         if [ -z "$device_model" ]; then
             debug_msg "WARNING" "Device not specified...exiting"
