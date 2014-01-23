@@ -171,8 +171,7 @@ case "$device_model" in
         device_profile="$devices_dir/$device_model/$dev_profile_file"
         device_profile_dir="$devices_dir/$device_model/"
         device_scripts_dir="$device_profile_dir/scripts/"
-        device_files_dir="$device_profile_dir/files/"
-        device_sys_dir="$device_files_dir/system/"
+        device_sys_dir="$device_profile_dir/system/"
         if [ -z "$device_model" ]; then
             debug_msg "WARNING" "Device not specified...exiting"
             usage
