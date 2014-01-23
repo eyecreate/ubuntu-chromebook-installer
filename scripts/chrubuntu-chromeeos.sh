@@ -119,7 +119,7 @@ then
   exit 
 fi
 
-$(mkfs.ext4 ${target_rootfs} 2>&1) > /dev/null
+mkfs.ext4 ${target_rootfs}
 
 if [ ! -d /tmp/urfs ]
 then
