@@ -30,7 +30,7 @@ Usage
 3. Boot into ChromeOS, connect to a wireless network and log in as guest
 4. Open a shell (CTRL + ALT + t) and type `shell`
 5. From the shell go to the location of the script on the removable media `cd /media/removable/` and press **[TAB] [TAB]** on your keyboard to show and auto-complete your removable media path automatically
-6. Run the script with the `list` parameter to list the supported device(s) `sudo bash main.sh list` or the `search` parameter to search in all devices profile(s) `sudo bash main search DEVICE_PROFILE` (ex: sudo bash main.sh search acer)
+6. Run the script with the `list` parameter to list the supported device(s) `sudo bash main.sh list` or the `search` parameter to search in all devices profile(s) `sudo bash main.sh search DEVICE_PROFILE` (ex: sudo bash main.sh search acer)
 7. Run the script with the appropriate manifest for your device `sudo bash main.sh DEVICE_PROFILE` (ex: sudo bash main.sh acer-c720)
 8. On the first run you will be asked how much storage space you want to dedicate to elementary OS
 9. After the first run, your system will reboot to complete the initial formating, then you will need to re-run the script with the same parameters to complete the installation process
