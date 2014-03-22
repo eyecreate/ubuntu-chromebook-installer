@@ -1,4 +1,4 @@
-#elementary OS device profile for the Acer C720 Chromebook
+#elementary OS device profile for the Asus Panther Chromebox
 
 #Devices hardware
 system_drive="/dev/sda"

@@ -6,9 +6,9 @@ ChromeeOS will install elementary OS (with ChrUbuntu) and apply automatically al
 Supported device(s)
 -------------------
 
-* Acer C720
-* Asus Chromebox
+* Acer C720 (Tested)
 * HP Chromebook 14 (Untested, but should work using the Acer C720 device profile)
+* Asus Panther Chromebox (Tested)
 
 Prerequisites
 -------------
