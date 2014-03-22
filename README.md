@@ -7,6 +7,7 @@ Supported device(s)
 -------------------
 
 * Acer C720
+* Asus Chromebox
 * HP Chromebook 14 (Untested, but should work using the Acer C720 device profile)
 
 Prerequisites
