@@ -48,4 +48,5 @@ Credit(s)
 * SuccessInCircuit on reddit for making a [guide](http://www.reddit.com/r/chrubuntu/comments/1rsxkd/list_of_fixes_for_xubuntu_1310_on_the_acer_c720/) on how to fix mostly everything with the Acer C720
 * Benson Leung for his [cros-haswell-modules](https://googledrive.com/host/0B0YvUuHHn3MndlNDbXhPRlB2eFE/cros-haswell-modules.sh) script
 * [Quatral Solutions](http://www.quatral.com) for providing the Acer C720 Chromebook
+* Jesus Lopez - Thanks for helping testing ChromeeOS for the Asus Chromebox
 * Everyone who contributed
