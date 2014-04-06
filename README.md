@@ -1,7 +1,7 @@
-ChromeeOS - elementary OS installation script for Chromebooks
+ChromeeOS - Ubuntu OS installation script for Chromebooks
 ============================================
 
-ChromeeOS will install elementary OS (with ChrUbuntu) and apply automatically all the necessary fixes to run elementary OS on Chromebooks. You will be able to boot in ChromeOS or elementary OS on your Chromebook.
+ChromeeOS will install Ubuntu (with ChrUbuntu) and apply automatically all the necessary fixes to run Ubuntu on Chromebooks. You will be able to boot in ChromeOS or Ubuntu on your Chromebook.
 
 Supported device(s)
 -------------------
@@ -33,20 +33,22 @@ Usage
 5. From the shell go to the location of the script on the removable media `cd /media/removable/` and press **[TAB] [TAB]** on your keyboard to show and auto-complete your removable media path automatically
 6. Run the script with the `list` parameter to list the supported device(s) `sudo bash main.sh list` or the `search` parameter to search in all devices profile(s) `sudo bash main.sh search DEVICE_PROFILE` (ex: sudo bash main.sh search acer)
 7. Run the script with the appropriate manifest for your device `sudo bash main.sh DEVICE_PROFILE` (ex: sudo bash main.sh acer-c720)
-8. On the first run you will be asked how much storage space you want to dedicate to elementary OS
+8. On the first run you will be asked how much storage space you want to dedicate to Ubuntu
 9. After the first run, your system will reboot to complete the initial formating, then you will need to re-run the script with the same parameters to complete the installation process
 10. Follow the prompt to complete the installation
-11. After the installation is completed and the Chromebook has rebooted, press CTRL+L to boot into elementary OS
+11. After the installation is completed and the Chromebook has rebooted, press CTRL+L to boot into Ubuntu
 12. On first boot you will be asked to complete your system configuration (Language, Time zone, Computer name) and create a user account
 
 Credit(s)
 ---------
 
-* The [elementary OS](http://elementaryos.org/) development team for creating this awesome Linux distribution
-* Parimal Satyal for making a [guide](http://realityequation.net/installing-elementary-os-on-an-hp-chromebook-14) on how to install elementary OS on the HP Chromebook 14
+* The [Ubuntu](http://ubuntu.com/) development team for creating this awesome Linux distribution
+* Parimal Satyal for making a [guide](http://realityequation.net/installing-elementary-os-on-an-hp-chromebook-14) on how to install Ubuntu on the HP Chromebook 14
 * Jay Lee for creating [ChrUbuntu](http://chromeos-cr48.blogspot.ca/) from which I use a modified version
 * SuccessInCircuit on reddit for making a [guide](http://www.reddit.com/r/chrubuntu/comments/1rsxkd/list_of_fixes_for_xubuntu_1310_on_the_acer_c720/) on how to fix mostly everything with the Acer C720
 * Benson Leung for his [cros-haswell-modules](https://googledrive.com/host/0B0YvUuHHn3MndlNDbXhPRlB2eFE/cros-haswell-modules.sh) script
 * [Quatral Solutions](http://www.quatral.com) for providing the Acer C720 Chromebook
 * Jesus Lopez - Thanks for helping testing ChromeeOS for the Asus Chromebox
+* Jonathan Frank (Setsuna666) for creating Chromeeos and the Acer C720 profile
 * Everyone who contributed
+* Kevin Whitaker for c720p patches and Ubuntu specific changes from elementary OS

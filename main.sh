@@ -1,5 +1,5 @@
 #!/bin/bash
-#ChromeeOS - elementary OS install script for Chromebooks
+#ChromeeOS - Ubuntu install script for Chromebooks
 
 #Variables definition
 #Script variables
@@ -38,7 +38,7 @@ chrubuntu_script="$scripts_dir/chrubuntu-chromeeos.sh"
 chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
 system_chroot="/tmp/urfs/"
 
-#elementary OS specific requirements
+#distro specific requirements
 #A tar.gz version of elementary OS ISO (elementaryos-stable-amd64.20130810.iso) squashfs content 
 eos_sys_archive_url="http://goo.gl/gX3XEE"
 eos_sys_archive="$tmp_dir/elementaryos_system.tar.gz"
@@ -49,7 +49,7 @@ usage(){
 cat << EOF
 usage: $0 [ OPTIONS ] [ DEVICE_PROFILE | ACTION ]
       
-ChromeeOS - elmentary OS installation script for Chromebooks
+ChromeeOS - Ubuntu installation script for Chromebooks
 
     OPTIONS:
     -h      Show help
@@ -184,7 +184,7 @@ case "$device_model" in
         ;;
 esac
 
-debug_msg "INFO" "ChromeeOS - elementary OS installation script for Chromebooks by Setsuna666 on github Setsuna666/elementaryos-chromebook"
+debug_msg "INFO" "ChromeeOS - Ubuntu installation script for Chromebooks by eyecreate on github. Derived from Setsuna666/elementaryos-chromebook"
 #Creating log files directory before using the log_msg function
 if [ ! -e "$log_dir" ]; then
     mkdir $log_dir
@@ -244,27 +244,27 @@ if [ ! -e "$system_partition" ];then
     exit 1
 fi
 
-log_msg "INFO" "Downloading elementary OS system files..."
+log_msg "INFO" "Downloading Ubuntu system files..."
 if [ ! -e "$eos_sys_archive" ];then
     curl -o "$eos_sys_archive" -L -O "$eos_sys_archive_url"
 else
-    log_msg "INFO" "elementary OS system files are already downloaded...skipping"
+    log_msg "INFO" "Ubuntu system files are already downloaded...skipping"
 fi
 
-log_msg "INFO" "Validating elementary OS system files archive md5sum..."
+log_msg "INFO" "Validating Ubuntu system files archive md5sum..."
 eos_sys_archive_dl_md5=$(md5sum $eos_sys_archive | awk '{print $1}')
 
 #MD5 validation of eOS system files archive
 if [ "$eos_sys_archive_md5" != "$eos_sys_archive_dl_md5" ];then
-    log_msg "ERROR" "elementary OS system files archive MD5 does not match...exiting"
+    log_msg "ERROR" "Ubuntu system files archive MD5 does not match...exiting"
     run_command "rm $eos_sys_archive"
-    log_msg "INFO" "Re-run this script to download the elementary OS system files archive..."
+    log_msg "INFO" "Re-run this script to download the Ubuntu system files archive..."
     exit 1
 else
-  log_msg "INFO" "elementary OS system files archive MD5 match...continuing"
+  log_msg "INFO" "Ubuntu system files archive MD5 match...continuing"
 fi
 
-log_msg "INFO" "Installing elementary OS system files to $system_chroot..."
+log_msg "INFO" "Installing Ubuntu system files to $system_chroot..."
 run_command "tar -xvf $eos_sys_archive -C $system_chroot"
 
 if [ -e "$default_sys_dir" ];then
@@ -306,7 +306,7 @@ log_msg "INFO" "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $system_chroot/etc/fstab"
 
-log_msg "INFO" "Installing elementary OS updates..."
+log_msg "INFO" "Installing Ubuntu updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q upgrade"
 
@@ -347,7 +347,7 @@ run_command_chroot "mkswap /swap.img"
 run_command_chroot "chown root:root /swap.img"
 run_command_chroot "chmod 0600 /swap.img"
 
-log_msg "INFO" "Finishing configuration for elementary OS..."
+log_msg "INFO" "Finishing configuration for Ubuntu..."
 run_command_chroot "chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem"
@@ -375,7 +375,7 @@ run_command "sudo umount $system_chroot/sys"
 run_command "sudo umount $system_chroot/proc"
 run_command "sudo umount $system_chroot"
 
-log_msg "INFO" "elementary OS installation completed. On first boot you will be asked to do the initial configuration for your system language, timezone, computer name and user account"
+log_msg "INFO" "Ubuntu installation completed. On first boot you will be asked to do the initial configuration for your system language, timezone, computer name and user account"
 log_msg "INFO" "Press [ENTER] to reboot..."
 read
 run_command "sudo reboot"
