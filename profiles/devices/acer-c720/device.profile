@@ -18,7 +18,7 @@ swap_file_size="2G"
 #Add kernel packages from URL
 #Changed kernel source from mainlaine to Ubuntu official repository and version from 3.12.5 to 3.13, since this is the one that will be used in 14.04
 #kernel_url_pkgs="http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/linux-headers-3.12.5-031205-generic_3.12.5-031205.201312120254_amd64.deb http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/linux-headers-3.12.5-031205_3.12.5-031205.201312120254_all.deb http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.12.5-trusty/linux-image-3.12.5-031205-generic_3.12.5-031205.201312120254_amd64.deb"
-kernel_url_pkgs="http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/l/linux/linux-image-3.13.0-5-generic_3.13.0-5.20_amd64.deb http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/l/linux/linux-headers-3.13.0-5-generic_3.13.0-5.20_amd64.deb http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/l/linux/linux-headers-3.13.0-5_3.13.0-5.20_all.deb"
+#kernel_url_pkgs="http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/l/linux/linux-image-3.13.0-5-generic_3.13.0-5.20_amd64.deb http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/l/linux/linux-headers-3.13.0-5-generic_3.13.0-5.20_amd64.deb http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/l/linux/linux-headers-3.13.0-5_3.13.0-5.20_all.deb"
 
 #Additional repository(ies) and package(s) to install
 #Add additional PPA (Not available yet)
@@ -28,4 +28,4 @@ kernel_url_pkgs="http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/l/l
 #url_pkgs="$kernel_url_pkgs"
 
 #Add packages from a PPA
-ppa_pkgs="xserver-xorg-lts-raring xbindkeys xdotool xbacklight"
+ppa_pkgs="xserver-xorg-core xbindkeys xdotool xbacklight"

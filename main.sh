@@ -1,5 +1,5 @@
 #!/bin/bash
-#ChromeeOS - Ubuntu install script for Chromebooks
+#ChromeOS - Ubuntu install script for Chromebooks
 
 #Variables definition
 #Script variables
@@ -7,7 +7,7 @@ current_dir="$(dirname $BASH_SOURCE)"
 verbose=0
 
 #Script global directory variables
-log_file="elementary-install.log"
+log_file="ubuntu-install.log"
 log_dir="$current_dir/logs/"
 tmp_dir="$current_dir/tmp/"
 conf_dir="$current_dir/conf.d/"
@@ -39,17 +39,17 @@ chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
 system_chroot="/tmp/urfs/"
 
 #distro specific requirements
-#A tar.gz version of elementary OS ISO (elementaryos-stable-amd64.20130810.iso) squashfs content 
-eos_sys_archive_url="http://goo.gl/gX3XEE"
-eos_sys_archive="$tmp_dir/elementaryos_system.tar.gz"
-eos_sys_archive_md5="a9782e1772abe882a9dd567fde89105a"
+#A tar.gz version of live ISO squashfs content 
+eos_sys_archive_url="http://goo.gl/Q5wWpN"
+eos_sys_archive="$tmp_dir/ubuntu_system.tar.gz"
+eos_sys_archive_md5="76086af101e3efd563dc8b90f080af38"
 
 #Functions definition
 usage(){
 cat << EOF
 usage: $0 [ OPTIONS ] [ DEVICE_PROFILE | ACTION ]
       
-ChromeeOS - Ubuntu installation script for Chromebooks
+ChromeOS - Ubuntu installation script for Chromebooks
 
     OPTIONS:
     -h      Show help
@@ -184,7 +184,7 @@ case "$device_model" in
         ;;
 esac
 
-debug_msg "INFO" "ChromeeOS - Ubuntu installation script for Chromebooks by eyecreate on github. Derived from Setsuna666/elementaryos-chromebook"
+debug_msg "INFO" "ChromeOS - Ubuntu installation script for Chromebooks by eyecreate on github. Derived from Setsuna666/elementaryos-chromebook"
 #Creating log files directory before using the log_msg function
 if [ ! -e "$log_dir" ]; then
     mkdir $log_dir
@@ -254,7 +254,7 @@ fi
 log_msg "INFO" "Validating Ubuntu system files archive md5sum..."
 eos_sys_archive_dl_md5=$(md5sum $eos_sys_archive | awk '{print $1}')
 
-#MD5 validation of eOS system files archive
+#MD5 validation of Ubuntu system files archive
 if [ "$eos_sys_archive_md5" != "$eos_sys_archive_dl_md5" ];then
     log_msg "ERROR" "Ubuntu system files archive MD5 does not match...exiting"
     run_command "rm $eos_sys_archive"
@@ -310,7 +310,7 @@ log_msg "INFO" "Installing Ubuntu updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q upgrade"
 
-#Device profile validation for the installation ofkernel packages from an URL
+#Device profile validation for the installation of kernel packages from an URL
 if [ ! -z "$kernel_url_pkgs" ];then
     kernel_url_pkgs_array=($kernel_url_pkgs)
     kernel_dir="/tmp/kernel/"

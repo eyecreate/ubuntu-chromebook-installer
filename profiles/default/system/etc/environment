@@ -1,3 +1,3 @@
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
-CLUTTER_PAINT=disable-clipped-redraws:disable-culling
-CLUTTER_VBLANK=True
+#CLUTTER_PAINT=disable-clipped-redraws:disable-culling
+#CLUTTER_VBLANK=True
