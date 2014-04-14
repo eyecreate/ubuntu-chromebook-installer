@@ -401,6 +401,9 @@ run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q install oem-config"
 run_command_chroot "touch /var/lib/oem-config/run"
 
+log_msg "INFO" "Removing Memtest from installation."
+run_command "sudo rm $system_chroot/boot/memtest86+*"
+
 log_msg "INFO" "Installing and updating grub to $system_drive..."
 run_command_chroot "grub-install $system_drive --force"
 run_command_chroot "update-grub"
