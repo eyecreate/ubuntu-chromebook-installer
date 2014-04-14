@@ -372,6 +372,10 @@ if [ ! -z "$ppa_pkgs" ];then
     done
 fi
 
+log_msg "INFO" "Creating hosts file..."
+echo -e "127.0.0.1  localhost\n127.0.1.1  $system_computer_name\n# The following lines are desirable for IPv6 capable hosts\n::1     ip6-localhost ip6-loopback\nfe00::0 ip6-localnet\nff00::0 ip6-mcastprefix\nff02::1 ip6-allnodes\nff02::2 ip6-allrouters" > $tmp_dir/hosts
+run_command "sudo mv $tmp_dir/hosts $system_chroot/etc/hosts"
+
 #Verification for the chroot scripts directory
 if [ -e "$chroot_dir_scripts" ];then
     log_msg "INFO" "Executing device scripts..."
@@ -394,10 +398,6 @@ run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q remove gparted"
 run_command_chroot "rm -rf /tmp/*"
 run_command_chroot "chmod -R 777 /tmp/"
-
-log_msg "INFO" "Creating hosts file..."
-echo -e "127.0.0.1  localhost\n127.0.1.1  $system_computer_name\n# The following lines are desirable for IPv6 capable hosts\n::1     ip6-localhost ip6-loopback\nfe00::0 ip6-localnet\nff00::0 ip6-mcastprefix\nff02::1 ip6-allnodes\nff02::2 ip6-allrouters" > $tmp_dir/hosts
-run_command "sudo mv $tmp_dir/hosts $system_chroot/etc/hosts"
 
 log_msg "INFO" "Enabling user and system configuration on first boot..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
