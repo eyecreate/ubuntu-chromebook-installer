@@ -40,7 +40,7 @@ system_chroot="/tmp/urfs/"
 
 #distro specific requirements
 #A tar.gz version of live ISO squashfs content 
-eos_sys_archive_url="http://goo.gl/Q5wWpN"
+eos_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/ubuntu_040814_filesystem.tar.gz"
 eos_sys_archive="$tmp_dir/ubuntu_system.tar.gz"
 eos_sys_archive_md5="76086af101e3efd563dc8b90f080af38"
 

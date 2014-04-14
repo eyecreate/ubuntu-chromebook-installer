@@ -5,6 +5,7 @@ cd $tempbuild
 # Determine kernel version (with and without Ubuntu-specific suffix)
 #mykern=${1:-$(uname -r)}
 #mykern=$(uname -r)
+#mykern=$(python linux-ver-latest.py "`apt-cache show linux-image-generic | grep Depends |head -1`")
 mykern=3.13.0-23-generic
 mykernver=linux-$(echo $mykern | cut -d'-' -f 1)
 
