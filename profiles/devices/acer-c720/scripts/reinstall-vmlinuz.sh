@@ -1,3 +1,6 @@
+mykern=$(python << END
+import re,sys
+
 txt="`apt-cache show linux-image-generic | grep Depends |head -1`"
 
 re1='.*?'	# Non-greedy match on filler
@@ -23,4 +26,4 @@ if m:
     word1=m.group(8)
     print int1+c1+int2+c2+int3+signed_int1+c3+word1
 END)
-sudo apt-get install --reinstall linux-image-$txt
+sudo apt-get install --reinstall linux-image-$mykern
