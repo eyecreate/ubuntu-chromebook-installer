@@ -276,7 +276,7 @@ if [ $kubuntu_toggle == 0 ]; then
     fi
 
     log_msg "INFO" "Installing Ubuntu system files to $system_chroot..."
-    run_command "tar -xvf $eos_sys_archive -C $system_chroot"
+    run_command "tar -xf $eos_sys_archive -C $system_chroot"
     
 else
 
@@ -301,7 +301,7 @@ else
     fi
 
     log_msg "INFO" "Installing kubuntu system files to $system_chroot..."
-    run_command "tar -xvf $kub_sys_archive -C $system_chroot"
+    run_command "tar -xf $kub_sys_archive -C $system_chroot"
 
 fi
 if [ -e "$default_sys_dir" ];then
