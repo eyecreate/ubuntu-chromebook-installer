@@ -40,16 +40,16 @@ chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
 system_chroot="/tmp/urfs/"
 
 #distro specific requirements
-#A squashfs version of live ISO squashfs content 
-eos_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/ubuntu-041314-filesystem.squashfs"
-eos_sys_archive="$tmp_dir/ubuntu_system.squashfs"
-eos_sys_archive_md5="4ba547ffb2d16ff7bad61230888acf79"
+#A filesystem version of live ISO squashfs content 
+eos_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/ubuntu-image-041314.tar.gz"
+eos_sys_archive="$tmp_dir/ubuntu_system.tar.gz"
+eos_sys_archive_md5="2a14cd56e0e116e921b064ee2959280a"
 
 #kubuntu disto
-#A squashfs version of live ISO squashfs content 
-kub_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/kubuntu-041314-filesystem.squashfs"
-kub_sys_archive="$tmp_dir/kubuntu_system.squashfs"
-kub_sys_archive_md5="cd4e02547cddc3b0868909f968584676"
+#A filesystem version of live ISO squashfs content 
+kub_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/kubuntu-image-041314.tar.gz"
+kub_sys_archive="$tmp_dir/kubuntu_system.tar.gz"
+kub_sys_archive_md5="6c3485b05f6de42027f23b4217b6c84d"
 
 #Functions definition
 usage(){
@@ -276,7 +276,7 @@ if [ $kubuntu_toggle == 0 ]; then
     fi
 
     log_msg "INFO" "Installing Ubuntu system files to $system_chroot..."
-    run_command "unsquashfs -f -d $system_chroot $eos_sys_archive"
+    run_command "tar -xvf $eos_sys_archive -C $system_chroot"
     
 else
 
@@ -301,7 +301,7 @@ else
     fi
 
     log_msg "INFO" "Installing kubuntu system files to $system_chroot..."
-    run_command "unsquashfs -f -d $system_chroot $kub_sys_archive"
+    run_command "tar -xvf $kub_sys_archive -C $system_chroot"
 
 fi
 if [ -e "$default_sys_dir" ];then
