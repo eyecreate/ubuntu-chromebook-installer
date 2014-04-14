@@ -1,7 +1,7 @@
 Ubuntu OS installation script for Chromebooks
 ============================================
 
-This will install Ubuntu (with ChrUbuntu) and apply automatically all the necessary fixes to run Ubuntu on Chromebooks. You will be able to boot in ChromeOS or Ubuntu on your Chromebook.
+This will install Ubuntu or Kubuntu (with ChrUbuntu) and apply automatically all the necessary fixes to run Ubuntu on Chromebooks. You will be able to boot in ChromeOS or Ubuntu on your Chromebook.
 
 Supported device(s)
 -------------------
