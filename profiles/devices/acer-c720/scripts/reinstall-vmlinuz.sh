@@ -1,3 +1,4 @@
+sudo rm /initrd.img /vmlinuz
 mykern=$(python << END
 import re,sys
 
