@@ -5,6 +5,7 @@
 #Script variables
 current_dir="$(dirname $BASH_SOURCE)"
 verbose=0
+kubuntu_toggle=0
 
 #Script global directory variables
 log_file="ubuntu-install.log"
@@ -39,10 +40,16 @@ chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
 system_chroot="/tmp/urfs/"
 
 #distro specific requirements
-#A tar.gz version of live ISO squashfs content 
-eos_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/ubuntu_040814_filesystem.tar.gz"
-eos_sys_archive="$tmp_dir/ubuntu_system.tar.gz"
-eos_sys_archive_md5="76086af101e3efd563dc8b90f080af38"
+#A squashfs version of live ISO squashfs content 
+eos_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/ubuntu-041314-filesystem.squashfs"
+eos_sys_archive="$tmp_dir/ubuntu_system.squashfs"
+eos_sys_archive_md5="4ba547ffb2d16ff7bad61230888acf79"
+
+#kubuntu disto
+#A squashfs version of live ISO squashfs content 
+kub_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/kubuntu-041314-filesystem.squashfs"
+kub_sys_archive="$tmp_dir/kubuntu_system.squashfs"
+kub_sys_archive_md5="cd4e02547cddc3b0868909f968584676"
 
 #Functions definition
 usage(){
@@ -54,6 +61,7 @@ ChromeOS - Ubuntu installation script for Chromebooks
     OPTIONS:
     -h      Show help
     -v      Enable verbose mode
+    -k	    Use Kubuntu instead of Ubuntu
 
     DEVICE_PROFILE:
         The device profile to load for your Chromebook
@@ -124,7 +132,7 @@ run_command_chroot(){
 #Required arguments
 
 #Optional arguments
-while getopts "hd:" option; do
+while getopts "hvk" option; do
     case $option in
         h)
             usage
@@ -132,6 +140,9 @@ while getopts "hd:" option; do
             ;;
         v)
             verbose=1
+            ;;
+        k)
+            kubuntu_toggle=1
             ;;
         ?)
             usage
@@ -184,7 +195,7 @@ case "$device_model" in
         ;;
 esac
 
-debug_msg "INFO" "ChromeOS - Ubuntu installation script for Chromebooks by eyecreate on github. Derived from Setsuna666/elementaryos-chromebook"
+debug_msg "INFO" "ChromeOS - (k)ubuntu installation script for Chromebooks by eyecreate on github. Derived from Setsuna666/elementaryos-chromebook"
 #Creating log files directory before using the log_msg function
 if [ ! -e "$log_dir" ]; then
     mkdir $log_dir
@@ -243,30 +254,56 @@ if [ ! -e "$system_partition" ];then
     log_msg "ERROR" "System drive $system_partition does not exist...exiting"
     exit 1
 fi
+if [ $kubuntu_toggle == 0 ]; then
+    log_msg "INFO" "Downloading Ubuntu system files..."
+    if [ ! -e "$eos_sys_archive" ];then
+	curl -o "$eos_sys_archive" -L -O "$eos_sys_archive_url"
+    else
+	log_msg "INFO" "Ubuntu system files are already downloaded...skipping"
+    fi
 
-log_msg "INFO" "Downloading Ubuntu system files..."
-if [ ! -e "$eos_sys_archive" ];then
-    curl -o "$eos_sys_archive" -L -O "$eos_sys_archive_url"
+    log_msg "INFO" "Validating Ubuntu system files archive md5sum..."
+    eos_sys_archive_dl_md5=$(md5sum $eos_sys_archive | awk '{print $1}')
+
+    #MD5 validation of Ubuntu system files archive
+    if [ "$eos_sys_archive_md5" != "$eos_sys_archive_dl_md5" ];then
+	log_msg "ERROR" "Ubuntu system files archive MD5 does not match...exiting"
+	run_command "rm $eos_sys_archive"
+	log_msg "INFO" "Re-run this script to download the Ubuntu system files archive..."
+	exit 1
+    else
+      log_msg "INFO" "Ubuntu system files archive MD5 match...continuing"
+    fi
+
+    log_msg "INFO" "Installing Ubuntu system files to $system_chroot..."
+    run_command "unsquashfs -f -d $system_chroot $eos_sys_archive"
+    
 else
-    log_msg "INFO" "Ubuntu system files are already downloaded...skipping"
+
+    log_msg "INFO" "Downloading Kubuntu system files..."
+    if [ ! -e "$kub_sys_archive" ];then
+	curl -o "$kub_sys_archive" -L -O "$kub_sys_archive_url"
+    else
+	log_msg "INFO" "kubuntu system files are already downloaded...skipping"
+    fi
+
+    log_msg "INFO" "Validating kubuntu system files archive md5sum..."
+    kub_sys_archive_dl_md5=$(md5sum $kub_sys_archive | awk '{print $1}')
+
+    #MD5 validation of Ubuntu system files archive
+    if [ "$kub_sys_archive_md5" != "$kub_sys_archive_dl_md5" ];then
+	log_msg "ERROR" "kubuntu system files archive MD5 does not match...exiting"
+	run_command "rm $kub_sys_archive"
+	log_msg "INFO" "Re-run this script to download the kubuntu system files archive..."
+	exit 1
+    else
+      log_msg "INFO" "kubuntu system files archive MD5 match...continuing"
+    fi
+
+    log_msg "INFO" "Installing kubuntu system files to $system_chroot..."
+    run_command "unsquashfs -f -d $system_chroot $kub_sys_archive"
+
 fi
-
-log_msg "INFO" "Validating Ubuntu system files archive md5sum..."
-eos_sys_archive_dl_md5=$(md5sum $eos_sys_archive | awk '{print $1}')
-
-#MD5 validation of Ubuntu system files archive
-if [ "$eos_sys_archive_md5" != "$eos_sys_archive_dl_md5" ];then
-    log_msg "ERROR" "Ubuntu system files archive MD5 does not match...exiting"
-    run_command "rm $eos_sys_archive"
-    log_msg "INFO" "Re-run this script to download the Ubuntu system files archive..."
-    exit 1
-else
-  log_msg "INFO" "Ubuntu system files archive MD5 match...continuing"
-fi
-
-log_msg "INFO" "Installing Ubuntu system files to $system_chroot..."
-run_command "tar -xvf $eos_sys_archive -C $system_chroot"
-
 if [ -e "$default_sys_dir" ];then
     log_msg "INFO" "Copying global system files to $system_chroot..."
     run_command "sudo cp -Rvu $default_sys_dir/. $system_chroot"
@@ -306,7 +343,7 @@ log_msg "INFO" "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $system_chroot/etc/fstab"
 
-log_msg "INFO" "Installing Ubuntu updates..."
+log_msg "INFO" "Installing updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q upgrade"
 
@@ -347,7 +384,7 @@ run_command_chroot "mkswap /swap.img"
 run_command_chroot "chown root:root /swap.img"
 run_command_chroot "chmod 0600 /swap.img"
 
-log_msg "INFO" "Finishing configuration for Ubuntu..."
+log_msg "INFO" "Finishing configuration..."
 run_command_chroot "chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "chmod u+s /usr/lib/dbus-1.0/dbus-daemon-launch-helper"
 run_command_chroot "rm /etc/skel/.config/plank/dock1/launchers/ubiquity.dockitem"
@@ -375,7 +412,7 @@ run_command "sudo umount $system_chroot/sys"
 run_command "sudo umount $system_chroot/proc"
 run_command "sudo umount $system_chroot"
 
-log_msg "INFO" "Ubuntu installation completed. On first boot you will be asked to do the initial configuration for your system language, timezone, computer name and user account"
+log_msg "INFO" "(k)ubuntu installation completed. On first boot you will be asked to do the initial configuration for your system language, timezone, computer name and user account"
 log_msg "INFO" "Press [ENTER] to reboot..."
 read
 run_command "sudo reboot"
