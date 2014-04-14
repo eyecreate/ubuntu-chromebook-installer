@@ -1,7 +1,7 @@
-ChromeOS - Ubuntu OS installation script for Chromebooks
+Ubuntu OS installation script for Chromebooks
 ============================================
 
-ChromeOS will install Ubuntu (with ChrUbuntu) and apply automatically all the necessary fixes to run Ubuntu on Chromebooks. You will be able to boot in ChromeOS or Ubuntu on your Chromebook.
+This will install Ubuntu (with ChrUbuntu) and apply automatically all the necessary fixes to run Ubuntu on Chromebooks. You will be able to boot in ChromeOS or Ubuntu on your Chromebook.
 
 Supported device(s)
 -------------------
