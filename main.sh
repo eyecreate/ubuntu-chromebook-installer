@@ -343,6 +343,9 @@ log_msg "INFO" "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $system_chroot/etc/fstab"
 
+log_msg "INFO" "Adding 14.04 source repo..."
+run_command_chroot "echo 'deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe' |sudo tee -a /etc/apt/sources.list"
+
 log_msg "INFO" "Installing updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q upgrade"
@@ -403,6 +406,9 @@ run_command_chroot "touch /var/lib/oem-config/run"
 
 log_msg "INFO" "Removing Memtest from installation."
 run_command "sudo rm $system_chroot/boot/memtest86+*"
+
+log_msg "INFO" "Running update-initramfs to create grub boot image..."
+run_command_chroot "update-initramfs -c -k all"
 
 log_msg "INFO" "Installing and updating grub to $system_drive..."
 run_command_chroot "grub-install $system_drive --force"
