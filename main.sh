@@ -344,7 +344,7 @@ echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / 
 run_command "sudo mv $tmp_dir/fstab $system_chroot/etc/fstab"
 
 log_msg "INFO" "Adding 14.04 source repo..."
-run_command_chroot "echo 'deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe' |sudo tee -a /etc/apt/sources.list"
+run_command_chroot "echo -e 'deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe \ndeb-src http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe' |sudo tee -a /etc/apt/sources.list"
 
 log_msg "INFO" "Installing updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
