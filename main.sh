@@ -314,6 +314,10 @@ fi
 if [ -e "$device_sys_dir" ];then
     log_msg "INFO" "Copying device system files to $system_chroot..."
     run_command "sudo cp -Rvu $device_sys_dir/. $system_chroot"
+    if [ "$default_sys_dir" == "acer-c720" ];then
+        run_command "sudo chmod a+x $system_chroot/system/etc/pm/sleep.d/00zcyapa"
+        run_command "sudo chmod a+x $system_chroot/system/etc/initramfs-tools/scripts/init-top/unbind_ehci"
+    fi
 else
     log_msg "INFO" "No device system files found...skipping"
 fi
