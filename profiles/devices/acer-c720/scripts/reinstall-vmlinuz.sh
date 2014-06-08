@@ -26,5 +26,6 @@ if m:
     c3=m.group(7)
     word1=m.group(8)
     print int1+c1+int2+c2+int3+signed_int1+c3+word1
-END)
+END
+)
 sudo apt-get install --reinstall linux-image-$mykern

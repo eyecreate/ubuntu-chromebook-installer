@@ -32,7 +32,8 @@ if m:
     c3=m.group(7)
     word1=m.group(8)
     print int1+c1+int2+c2+int3+signed_int1+c3+word1
-END)
+END
+)
 #mykern=3.13.0-23-generic
 mykernver=linux-$(echo $mykern | cut -d'-' -f 1)
 
@@ -44,16 +45,22 @@ sudo apt-get build-dep -y --no-install-recommends linux-image-$mykern
 apt-get source linux-image-$mykern
 cd $mykernver
 
+if [ -f drivers/platform/x86/chromeos_laptop.c ]; then
+  platform_folder=x86
+elif [ -f drivers/platform/chrome/chromeos_laptop.c ]; then
+  platform_folder=chrome
+fi
+
 # Use Benson Leung's post-Pixel Chromebook patches:
 # https://patchwork.kernel.org/bundle/bleung/chromeos-laptop-deferring-and-haswell/
 for patch in 3078491 3078481; do
-  wget -O - https://patchwork.kernel.org/patch/$patch/raw/ | patch -p1
+  wget -O - https://patchwork.kernel.org/patch/$patch/raw/| patch -p1
 done
 
 #for patch in 8759835 8759842 8759848 8759852 8759855 8759857; do
 #  wget -O - http://pastie.org/pastes/$patch/download | patch -p1
 #done
-wget -O - http://pastie.org/pastes/8878181/download | patch -p0
+wget -O - http://pastie.org/pastes/8878181/download | sed "s/drivers\/platform\/x86\/chromeos_laptop.c/drivers\/platform\/$platform_folder\/chromeos_laptop.c/g" | patch -p0
 
 # Need this
 cp /usr/src/linux-headers-$mykern/Module.symvers .
