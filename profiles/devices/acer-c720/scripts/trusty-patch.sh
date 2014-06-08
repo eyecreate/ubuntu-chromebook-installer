@@ -72,13 +72,13 @@ make prepare
 make modules_prepare
 
 # Build only the needed directories
-make SUBDIRS=drivers/platform/chrome modules
+make SUBDIRS=drivers/platform/$platform_folder modules
 make SUBDIRS=drivers/i2c/busses modules
 
 # switch to using our new chromeos_laptop.ko module
 # preserve old as .orig
-sudo mv /lib/modules/$mykern/kernel/drivers/platform/chrome/chromeos_laptop.ko /lib/modules/$mykern/kernel/drivers/platform/chrome/chromeos_laptop.ko.orig
-sudo cp drivers/platform/chrome/chromeos_laptop.ko /lib/modules/$mykern/kernel/drivers/platform/chrome/
+sudo mv /lib/modules/$mykern/kernel/drivers/platform/$platform_folder/chromeos_laptop.ko /lib/modules/$mykern/kernel/drivers/platform/$platform_folder/chromeos_laptop.ko.orig
+sudo cp drivers/platform/$platform_folder/chromeos_laptop.ko /lib/modules/$mykern/kernel/drivers/platform/$platform_folder/
 
 # switch to using our new designware i2c modules
 # preserve old as .orig
