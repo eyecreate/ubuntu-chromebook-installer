@@ -318,6 +318,19 @@ else
     log_msg "INFO" "No device system files found...skipping"
 fi
 
+#This section patches the source list to make sure all source code and repos are available.
+if [ $kubuntu_toggle == 0 ];then
+log_msg "INFO" "Detected Ubuntu. Adding universe repo."
+run_command_chroot "echo -e 'deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe"
+fi
+
+log_msg "INFO" "Adding 14.04 source repo..."
+run_command_chroot "echo -e 'deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe \ndeb-src http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe' |sudo tee -a /etc/apt/sources.list"
+
+log_msg "INFO" "Installing updates..."
+run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
+run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q upgrade"
+
 if [ -e "$device_scripts_dir" ];then
     scripts_dir="/tmp/scripts/"
     chroot_dir_scripts="$system_chroot/tmp/scripts/"
@@ -342,18 +355,6 @@ log_msg "INFO" "Getting UUID from system partition..."
 log_msg "INFO" "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $system_chroot/etc/fstab"
-
-if [ $kubuntu_toggle == 0 ];then
-log_msg "INFO" "Detected Ubuntu. Adding universe repo."
-run_command_chroot "echo -e 'deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe"
-fi
-
-log_msg "INFO" "Adding 14.04 source repo..."
-run_command_chroot "echo -e 'deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe \ndeb-src http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe' |sudo tee -a /etc/apt/sources.list"
-
-log_msg "INFO" "Installing updates..."
-run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
-run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q upgrade"
 
 #Device profile validation for the installation of kernel packages from an URL
 if [ ! -z "$kernel_url_pkgs" ];then
