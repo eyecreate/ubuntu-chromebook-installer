@@ -343,6 +343,11 @@ log_msg "INFO" "Creating /etc/fstab..."
 echo -e "proc  /proc nodev,noexec,nosuid  0   0\nUUID=$system_partition_uuid  / ext4  noatime,nodiratime,errors=remount-ro  0   0\n/swap.img  none  swap  sw  0   0" > $tmp_dir/fstab
 run_command "sudo mv $tmp_dir/fstab $system_chroot/etc/fstab"
 
+if [ $kubuntu_toggle == 0 ];then
+log_msg "INFO" "Detected Ubuntu. Adding universe repo."
+run_command_chroot "echo -e 'deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe"
+fi
+
 log_msg "INFO" "Adding 14.04 source repo..."
 run_command_chroot "echo -e 'deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe \ndeb-src http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe' |sudo tee -a /etc/apt/sources.list"
 
