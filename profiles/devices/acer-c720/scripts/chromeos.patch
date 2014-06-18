@@ -1,0 +1,92 @@
+--- drivers/platform/chrome/chromeos_laptop.c.orig	2014-01-19 21:40:07.000000000 -0500
++++ drivers/platform/chrome/chromeos_laptop.c	2014-03-05 15:15:14.556365174 -0500
+@@ -44,6 +44,8 @@
+ 	"SMBus I801 adapter",
+ 	"i915 gmbus vga",
+ 	"i915 gmbus panel",
++	"i2c-designware-pci-0",
++	"i2c-designware-pci-1",
+ };
+ 
+ /* Keep this enum consistent with i2c_adapter_names */
+@@ -51,6 +53,8 @@
+ 	I2C_ADAPTER_SMBUS = 0,
+ 	I2C_ADAPTER_VGADDC,
+ 	I2C_ADAPTER_PANEL,
++	I2C_ADAPTER_I2C0,
++	I2C_ADAPTER_I2C1,
+ };
+ 
+ static struct i2c_board_info __initdata cyapa_device = {
+@@ -247,6 +251,12 @@
+ 	return 0;
+ }
+ 
++static int __init setup_cyapa_i2c_tp_c720(const struct dmi_system_id *id)
++{
++	tp = add_i2c_device("trackpad", I2C_ADAPTER_I2C0, &cyapa_device);
++	return 0;
++}
++
+ static int __init setup_atmel_224s_tp(const struct dmi_system_id *id)
+ {
+ 	const unsigned short addr_list[] = { ATMEL_TP_I2C_BL_ADDR,
+@@ -271,6 +281,17 @@
+ 	return 0;
+ }
+ 
++static int __init setup_atmel_1664s_ts_c720p(const struct dmi_system_id *id)
++{
++	const unsigned short addr_list[] = { ATMEL_TS_I2C_BL_ADDR,
++					     ATMEL_TS_I2C_ADDR,
++					     I2C_CLIENT_END };
++
++	ts = add_probed_i2c_device("touchscreen", I2C_ADAPTER_I2C1,
++				   &atmel_1664s_device, addr_list);
++	return 0;
++}
++
+ 
+ static int __init setup_isl29018_als(const struct dmi_system_id *id)
+ {
+@@ -279,6 +300,12 @@
+ 	return 0;
+ }
+ 
++static int __init setup_isl29018_als_c720(const struct dmi_system_id *id)
++{
++	als = add_i2c_device("lightsensor", I2C_ADAPTER_I2C1, &isl_als_device);
++	return 0;
++}
++
+ static int __init setup_isl29023_als(const struct dmi_system_id *id)
+ {
+ 	/* add isl29023 light sensor on Panel GMBus */
+@@ -377,6 +404,27 @@
+ 		},
+ 		.callback = setup_tsl2563_als,
+ 	},
++		{
++		.ident = "Acer C720p - Touchscreen",
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Peppy"),
++		},
++		.callback = setup_atmel_1664s_ts_c720p,
++	},
++		{
++		.ident = "Acer C720 - Light Sensor",
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Peppy"),
++		},
++		.callback = setup_isl29018_als_c720,
++	},
++		{
++		.ident = "Acer C720 - Touchpad",
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Peppy"),
++		},
++		.callback = setup_cyapa_i2c_tp_c720,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(dmi, chromeos_laptop_dmi_table);
