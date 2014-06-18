@@ -60,7 +60,7 @@ done
 #for patch in 8759835 8759842 8759848 8759852 8759855 8759857; do
 #  wget -O - http://pastie.org/pastes/$patch/download | patch -p1
 #done
-wget -O - http://pastie.org/pastes/8878181/download | sed "s/drivers\/platform\/x86\/chromeos_laptop.c/drivers\/platform\/$platform_folder\/chromeos_laptop.c/g" | patch -p0
+wget -O - http://pastie.org/pastes/8878181/download | sed "s/drivers\/platform\/chrome\/chromeos_laptop.c/drivers\/platform\/$platform_folder\/chromeos_laptop.c/g" | patch -p0
 
 # Need this
 cp /usr/src/linux-headers-$mykern/Module.symvers .
