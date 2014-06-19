@@ -319,11 +319,7 @@ else
 fi
 
 #This section patches the source list to make sure all source code and repos are available.
-if [ $kubuntu_toggle == 0 ];then
-log_msg "INFO" "Detected Ubuntu. Adding universe repo."
 run_command_chroot "add-apt-repository universe"
-fi
-
 log_msg "INFO" "Adding 14.04 source repo..."
 run_command_chroot "add-apt-repository -s 'deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe'"
 run_command_chroot "add-apt-repository -s 'deb http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe'"
