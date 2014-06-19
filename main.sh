@@ -325,8 +325,8 @@ run_command_chroot "add-apt-repository universe"
 fi
 
 log_msg "INFO" "Adding 14.04 source repo..."
-run_command_chroot "add-apt-repository -s 'deb trusty main restricted universe'"
-run_command_chroot "add-apt-repository -s 'deb trusty-security main restricted universe'"
+run_command_chroot "add-apt-repository -s 'deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe'"
+run_command_chroot "add-apt-repository -s 'deb http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe'"
 
 log_msg "INFO" "Installing updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
