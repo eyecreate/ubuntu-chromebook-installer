@@ -321,11 +321,12 @@ fi
 #This section patches the source list to make sure all source code and repos are available.
 if [ $kubuntu_toggle == 0 ];then
 log_msg "INFO" "Detected Ubuntu. Adding universe repo."
-run_command_chroot "echo -e 'deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe"
+run_command_chroot "add-apt-repository universe"
 fi
 
 log_msg "INFO" "Adding 14.04 source repo..."
-run_command_chroot "echo -e 'deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted universe \ndeb-src http://archive.ubuntu.com/ubuntu/ trusty-security main restricted universe' |sudo tee -a /etc/apt/sources.list"
+run_command_chroot "add-apt-repository -s 'deb trusty main restricted universe'"
+run_command_chroot "add-apt-repository -s 'deb trusty-security main restricted universe'"
 
 log_msg "INFO" "Installing updates..."
 run_command_chroot "export DEBIAN_FRONTEND=noninteractive; apt-get -y -q update"
