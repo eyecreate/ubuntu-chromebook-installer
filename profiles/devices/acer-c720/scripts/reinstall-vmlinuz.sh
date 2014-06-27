@@ -28,4 +28,5 @@ if m:
     print int1+c1+int2+c2+int3+signed_int1+c3+word1
 END
 )
-sudo apt-get install --reinstall linux-image-$mykern
+mykernver=$(echo $mykern | cut -d'-' -f 1-2)
+sudo apt-get install --reinstall -y linux-headers-$mykernver linux-headers-$mykern linux-image-$mykern linux-image-extra-$mykern
