@@ -39,6 +39,8 @@ Usage
 11. After the installation is completed and the Chromebook has rebooted, press CTRL+L to boot into Ubuntu
 12. On first boot you will be asked to complete your system configuration (Language, Time zone, Computer name) and create a user account
 
+On future kernel updates, the script (profiles/devices/acer-c720/scripts/trusty-patch.sh) can be run from the installer folder to update the patches with updated kernels.(to some degree)
+
 Credit(s)
 ---------
 
