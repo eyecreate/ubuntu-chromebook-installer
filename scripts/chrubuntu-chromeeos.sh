@@ -48,7 +48,7 @@ if [ "$ckern_size" =  "1" -o "$croot_size" = "1" ]
 then
 while :
 do
-  read -p "Enter the size in gigabytes you want to reserve for elementary OS. Acceptable range is 5 to $max_ubuntu_size  but $rec_ubuntu_size is the recommended maximum: " ubuntu_size
+  read -p "Enter the size in gigabytes you want to reserve for Ubuntu. Acceptable range is 5 to $max_ubuntu_size  but $rec_ubuntu_size is the recommended maximum: " ubuntu_size
   if [ ! $ubuntu_size -ne 0 2>/dev/null ]
   then
     echo_red "\n\nNumbers only please...\n\n"
