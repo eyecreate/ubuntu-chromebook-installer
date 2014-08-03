@@ -9,6 +9,7 @@ Supported device(s)
 * Acer C720 (Tested)
 * HP Chromebook 14 (Untested, but should work using the Acer C720 device profile)
 * Asus Panther Chromebox (Tested)
+* Toshiba Chromebook (Untested)
 
 Prerequisites
 -------------
