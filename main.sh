@@ -289,7 +289,7 @@ if [ $kubuntu_toggle == 0 ] && [ $xubuntu_toggle == 0 ]; then
     log_msg "INFO" "Installing Ubuntu system files to $system_chroot..."
     run_command "tar -xf $eos_sys_archive -C $system_chroot"
     
-else if [ $kubuntu_toggle == 1 ]; then
+elif [ $kubuntu_toggle == 1 ]; then
 
     log_msg "INFO" "Downloading Kubuntu system files..."
     if [ ! -e "$kub_sys_archive" ];then
@@ -461,7 +461,7 @@ run_command "sudo umount $system_chroot/sys"
 run_command "sudo umount $system_chroot/proc"
 run_command "sudo umount $system_chroot"
 
-log_msg "INFO" "(k)ubuntu installation completed. On first boot you will be asked to do the initial configuration for your system language, timezone, computer name and user account"
+log_msg "INFO" "(k/x)ubuntu installation completed. On first boot you will be asked to do the initial configuration for your system language, timezone, computer name and user account"
 log_msg "INFO" "Press [ENTER] to reboot..."
 read
 run_command "sudo reboot"
