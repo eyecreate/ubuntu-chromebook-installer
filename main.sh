@@ -6,6 +6,7 @@
 current_dir="$(dirname $BASH_SOURCE)"
 verbose=0
 kubuntu_toggle=0
+xubuntu_toggle=0
 
 #Script global directory variables
 log_file="ubuntu-install.log"
@@ -51,6 +52,12 @@ kub_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c85
 kub_sys_archive="$tmp_dir/kubuntu_system.tar.gz"
 kub_sys_archive_md5="6c3485b05f6de42027f23b4217b6c84d"
 
+#xubuntu disto
+#A filesystem version of live ISO squashfs content 
+xub_sys_archive_url="http://s3.amazonaws.com/us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791/chromebook-ubuntu/xubuntu-image.tar.gz"
+xub_sys_archive="$tmp_dir/xubuntu_system.tar.gz"
+xub_sys_archive_md5="92590bf4a3cdcd0e5a43707f3bf4ae36"
+
 #Functions definition
 usage(){
 cat << EOF
@@ -62,6 +69,7 @@ ChromeOS - Ubuntu installation script for Chromebooks
     -h      Show help
     -v      Enable verbose mode
     -k	    Use Kubuntu instead of Ubuntu
+    -x	    Use Xubuntu instead of Ubuntu
 
     DEVICE_PROFILE:
         The device profile to load for your Chromebook
@@ -132,7 +140,7 @@ run_command_chroot(){
 #Required arguments
 
 #Optional arguments
-while getopts "hvk" option; do
+while getopts "hvkx" option; do
     case $option in
         h)
             usage
@@ -143,6 +151,9 @@ while getopts "hvk" option; do
             ;;
         k)
             kubuntu_toggle=1
+            ;;
+        x)
+            xubuntu_toggle=1
             ;;
         ?)
             usage
@@ -254,7 +265,7 @@ if [ ! -e "$system_partition" ];then
     log_msg "ERROR" "System drive $system_partition does not exist...exiting"
     exit 1
 fi
-if [ $kubuntu_toggle == 0 ]; then
+if [ $kubuntu_toggle == 0 ] && [ $xubuntu_toggle == 0 ]; then
     log_msg "INFO" "Downloading Ubuntu system files..."
     if [ ! -e "$eos_sys_archive" ];then
 	curl -o "$eos_sys_archive" -L -O "$eos_sys_archive_url"
@@ -278,7 +289,7 @@ if [ $kubuntu_toggle == 0 ]; then
     log_msg "INFO" "Installing Ubuntu system files to $system_chroot..."
     run_command "tar -xf $eos_sys_archive -C $system_chroot"
     
-else
+else if [ $kubuntu_toggle == 1 ]; then
 
     log_msg "INFO" "Downloading Kubuntu system files..."
     if [ ! -e "$kub_sys_archive" ];then
@@ -302,6 +313,32 @@ else
 
     log_msg "INFO" "Installing kubuntu system files to $system_chroot..."
     run_command "tar -xf $kub_sys_archive -C $system_chroot"
+
+    
+else
+
+    log_msg "INFO" "Downloading Xubuntu system files..."
+    if [ ! -e "$xub_sys_archive" ];then
+	curl -o "$xub_sys_archive" -L -O "$xub_sys_archive_url"
+    else
+	log_msg "INFO" "xubuntu system files are already downloaded...skipping"
+    fi
+
+    log_msg "INFO" "Validating xubuntu system files archive md5sum..."
+    xub_sys_archive_dl_md5=$(md5sum $xub_sys_archive | awk '{print $1}')
+
+    #MD5 validation of Ubuntu system files archive
+    if [ "$xub_sys_archive_md5" != "$xub_sys_archive_dl_md5" ];then
+	log_msg "ERROR" "xubuntu system files archive MD5 does not match...exiting"
+	run_command "rm $xub_sys_archive"
+	log_msg "INFO" "Re-run this script to download the xubuntu system files archive..."
+	exit 1
+    else
+      log_msg "INFO" "xubuntu system files archive MD5 match...continuing"
+    fi
+
+    log_msg "INFO" "Installing xubuntu system files to $system_chroot..."
+    run_command "tar -xf $xub_sys_archive -C $system_chroot"
 
 fi
 if [ -e "$default_sys_dir" ];then
