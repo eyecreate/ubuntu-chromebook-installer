@@ -12,8 +12,8 @@ case "${1}" in
 		# Bind ehci for preventing error
 		echo -n "0000:00:1d.0" | tee /sys/bus/pci/drivers/ehci-pci/bind
 		# Bind snd_hda_intel for sound
-		echo -n "0000:00:1b.0" | tee /sys/bus/pci/drivers/snd_hda_intel/bind
 		echo -n "0000:00:03.0" | tee /sys/bus/pci/drivers/snd_hda_intel/bind
+		echo -n "0000:00:1b.0" | tee /sys/bus/pci/drivers/snd_hda_intel/bind
 	;;
 
 esac
