@@ -8,6 +8,9 @@ verbose=0
 kubuntu_toggle=0
 xubuntu_toggle=0
 
+iso_read_bin="./bin/iso-read"
+unsquash_bin="./bin/unsquashfs"
+
 #Script global directory variables
 log_file="ubuntu-install.log"
 log_dir="$current_dir/logs/"
@@ -41,22 +44,19 @@ chrubuntu_runonce="$tmp_dir/chrubuntu_runonce"
 system_chroot="/tmp/urfs/"
 
 #distro specific requirements
-#A filesystem version of live ISO squashfs content 
-eos_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/ubuntu-image-041314.tar.gz"
-eos_sys_archive="$tmp_dir/ubuntu_system.tar.gz"
-eos_sys_archive_md5="2a14cd56e0e116e921b064ee2959280a"
+eos_sys_archive_url="http://cdimage.ubuntu.com/releases/trusty/release/ubuntu-14.04.1-desktop-amd64+mac.iso"
+eos_sys_archive="$tmp_dir/ubuntu-14.04.1-desktop-amd64+mac.iso"
+eos_sys_archive_md5="08a56c68e3681a6f4ae128810f6359d7"
 
 #kubuntu disto
-#A filesystem version of live ISO squashfs content 
-kub_sys_archive_url="http://us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791.s3.amazonaws.com/chromebook-ubuntu/kubuntu-image-041314.tar.gz"
-kub_sys_archive="$tmp_dir/kubuntu_system.tar.gz"
-kub_sys_archive_md5="6c3485b05f6de42027f23b4217b6c84d"
+kub_sys_archive_url="http://cdimage.ubuntu.com/kubuntu/releases/14.04/release/kubuntu-14.04.1-desktop-amd64.iso"
+kub_sys_archive="$tmp_dir/kubuntu-14.04.1-desktop-amd64.iso"
+kub_sys_archive_md5="d1eabbb0060ad45c1172877c726f0a5a"
 
 #xubuntu disto
-#A filesystem version of live ISO squashfs content 
-xub_sys_archive_url="http://s3.amazonaws.com/us.bucketexplorer.7071edbdbb1169aa0127873b1b45608c850bd791/chromebook-ubuntu/xubuntu-image.tar.gz"
-xub_sys_archive="$tmp_dir/xubuntu_system.tar.gz"
-xub_sys_archive_md5="92590bf4a3cdcd0e5a43707f3bf4ae36"
+xub_sys_archive_url="http://cdimage.ubuntu.com/xubuntu/releases/14.04/release/xubuntu-14.04.1-desktop-amd64.iso"
+xub_sys_archive="$tmp_dir/xubuntu-14.04.1-desktop-amd64.iso"
+xub_sys_archive_md5="8b06ac9d76186721312c17a851801e2e"
 
 #Functions definition
 usage(){
@@ -265,6 +265,8 @@ if [ ! -e "$system_partition" ];then
     log_msg "ERROR" "System drive $system_partition does not exist...exiting"
     exit 1
 fi
+    run_command "chmod +x ./bin/iso-read"
+    run_command "chmod +x ./bin/unsquashfs"
 if [ $kubuntu_toggle == 0 ] && [ $xubuntu_toggle == 0 ]; then
     log_msg "INFO" "Downloading Ubuntu system files..."
     if [ ! -e "$eos_sys_archive" ];then
@@ -287,7 +289,8 @@ if [ $kubuntu_toggle == 0 ] && [ $xubuntu_toggle == 0 ]; then
     fi
 
     log_msg "INFO" "Installing Ubuntu system files to $system_chroot..."
-    run_command "tar -xf $eos_sys_archive -C $system_chroot"
+    run_command "$iso_read_bin -i $eos_sys_archive -e casper/filesytem.squashfs -o filesystem.squashfs"
+    run_command "$unsquash_bin -f -d $system_chroot"
     
 elif [ $kubuntu_toggle == 1 ]; then
 
@@ -312,7 +315,8 @@ elif [ $kubuntu_toggle == 1 ]; then
     fi
 
     log_msg "INFO" "Installing kubuntu system files to $system_chroot..."
-    run_command "tar -xf $kub_sys_archive -C $system_chroot"
+    run_command "$iso_read_bin -i $kub_sys_archive -e casper/filesytem.squashfs -o filesystem.squashfs"
+    run_command "$unsquash_bin -f -d $system_chroot"
 
     
 else
@@ -338,7 +342,8 @@ else
     fi
 
     log_msg "INFO" "Installing xubuntu system files to $system_chroot..."
-    run_command "tar -xf $xub_sys_archive -C $system_chroot"
+    run_command "$iso_read_bin -i $xub_sys_archive -e casper/filesytem.squashfs -o filesystem.squashfs"
+    run_command "$unsquash_bin -f -d $system_chroot"
 
 fi
 if [ -e "$default_sys_dir" ];then
