@@ -9,8 +9,8 @@ kubuntu_toggle=0
 xubuntu_toggle=0
 
 #little hack to execute binaries without haave execute permission on mounted device.
-iso_read_bin="/lib/ld-linux.so.2 ./bin/iso-read"
-unsquash_bin="/lib/ld-linux.so.2 ./bin/unsquashfs"
+iso_read_bin="/lib64/ld-linux-x86-64.so.2 ./bin/iso-read"
+unsquash_bin="/lib64/ld-linux-x86-64.so.2 ./bin/unsquashfs"
 
 #Script global directory variables
 log_file="ubuntu-install.log"
