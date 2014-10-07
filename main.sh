@@ -8,8 +8,8 @@ verbose=0
 kubuntu_toggle=0
 xubuntu_toggle=0
 
-iso_read_bin="~/iso-read"
-unsquash_bin="~/unsquashfs"
+iso_read_bin="./bin/iso-read"
+unsquash_bin="./bin/unsquashfs"
 
 #Script global directory variables
 log_file="ubuntu-install.log"
@@ -265,9 +265,8 @@ if [ ! -e "$system_partition" ];then
     log_msg "ERROR" "System drive $system_partition does not exist...exiting"
     exit 1
 fi
-run_command "cp ./bin/* ~/"
-run_command "chmod +x ~/iso-read"
-run_command "chmod +x ~/unsquashfs"
+    run_command "chmod +x ./bin/iso-read"
+    run_command "chmod +x ./bin/unsquashfs"
 if [ $kubuntu_toggle == 0 ] && [ $xubuntu_toggle == 0 ]; then
     log_msg "INFO" "Downloading Ubuntu system files..."
     if [ ! -e "$eos_sys_archive" ];then
