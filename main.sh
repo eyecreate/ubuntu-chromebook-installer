@@ -9,7 +9,6 @@ kubuntu_toggle=0
 xubuntu_toggle=0
 
 #little hack to execute binaries without haave execute permission on mounted device.
-iso_read_bin="/lib64/ld-linux-x86-64.so.2 ./bin/iso-read"
 unsquash_bin="/lib64/ld-linux-x86-64.so.2 ./bin/unsquashfs"
 
 #Script global directory variables
@@ -266,6 +265,7 @@ if [ ! -e "$system_partition" ];then
     log_msg "ERROR" "System drive $system_partition does not exist...exiting"
     exit 1
 fi
+run_command "mkdir /tmp/isomnt"
 if [ $kubuntu_toggle == 0 ] && [ $xubuntu_toggle == 0 ]; then
     log_msg "INFO" "Downloading Ubuntu system files..."
     if [ ! -e "$eos_sys_archive" ];then
@@ -288,8 +288,8 @@ if [ $kubuntu_toggle == 0 ] && [ $xubuntu_toggle == 0 ]; then
     fi
 
     log_msg "INFO" "Installing Ubuntu system files to $system_chroot..."
-    run_command "$iso_read_bin -i $eos_sys_archive -e casper/filesytem.squashfs -o filesystem.squashfs"
-    run_command "$unsquash_bin -f -d $system_chroot"
+    run_command "mount -o loop $eos_sys_archive /tmp/isomnt"
+    run_command "$unsquash_bin -f -d $system_chroot /tmp/isomnt/casper/filesystem.squashfs"
     
 elif [ $kubuntu_toggle == 1 ]; then
 
@@ -314,8 +314,8 @@ elif [ $kubuntu_toggle == 1 ]; then
     fi
 
     log_msg "INFO" "Installing kubuntu system files to $system_chroot..."
-    run_command "$iso_read_bin -i $kub_sys_archive -e casper/filesytem.squashfs -o filesystem.squashfs"
-    run_command "$unsquash_bin -f -d $system_chroot"
+    run_command "mount -o loop $kub_sys_archive /tmp/isomnt"
+    run_command "$unsquash_bin -f -d $system_chroot /tmp/isomnt/casper/filesystem.squashfs"
 
     
 else
@@ -341,8 +341,8 @@ else
     fi
 
     log_msg "INFO" "Installing xubuntu system files to $system_chroot..."
-    run_command "$iso_read_bin -i $xub_sys_archive -e casper/filesytem.squashfs -o filesystem.squashfs"
-    run_command "$unsquash_bin -f -d $system_chroot"
+    run_command "mount -o loop $xub_sys_archive /tmp/isomnt"
+    run_command "$unsquash_bin -f -d $system_chroot /tmp/isomnt/casper/filesystem.squashfs"
 
 fi
 if [ -e "$default_sys_dir" ];then
