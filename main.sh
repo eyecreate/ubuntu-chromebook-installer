@@ -8,8 +8,9 @@ verbose=0
 kubuntu_toggle=0
 xubuntu_toggle=0
 
-iso_read_bin="./bin/iso-read"
-unsquash_bin="./bin/unsquashfs"
+#little hack to execute binaries without haave execute permission on mounted device.
+iso_read_bin="/lib/ld-linux.so.2 ./bin/iso-read"
+unsquash_bin="/lib/ld-linux.so.2 ./bin/unsquashfs"
 
 #Script global directory variables
 log_file="ubuntu-install.log"
@@ -265,8 +266,6 @@ if [ ! -e "$system_partition" ];then
     log_msg "ERROR" "System drive $system_partition does not exist...exiting"
     exit 1
 fi
-    run_command "chmod +x ./bin/iso-read"
-    run_command "chmod +x ./bin/unsquashfs"
 if [ $kubuntu_toggle == 0 ] && [ $xubuntu_toggle == 0 ]; then
     log_msg "INFO" "Downloading Ubuntu system files..."
     if [ ! -e "$eos_sys_archive" ];then
