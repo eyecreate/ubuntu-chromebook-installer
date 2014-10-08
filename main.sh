@@ -8,8 +8,8 @@ verbose=0
 kubuntu_toggle=0
 xubuntu_toggle=0
 
-#little hack to execute binaries without haave execute permission on mounted device.
-unsquash_bin="/lib64/ld-linux-x86-64.so.2 ./bin/unsquashfs"
+unsquash_bin="/tmp/ramdir/unsquashfs"
+unsquash_source="./bin/unsquashfs"
 
 #Script global directory variables
 log_file="ubuntu-install.log"
@@ -266,6 +266,11 @@ if [ ! -e "$system_partition" ];then
     exit 1
 fi
 run_command "mkdir /tmp/isomnt"
+run_command "mkdir /tmp/ramdir"
+#make a new mount point that is not tainted by noexec
+run_command "sudo mount -t tmpfs -o size=50M tmpfs /tmp/ramdir"
+run_command "cp $unsquash_source $unsquash_bin"
+run_command "chmod +x $unsquash_bin"
 if [ $kubuntu_toggle == 0 ] && [ $xubuntu_toggle == 0 ]; then
     log_msg "INFO" "Downloading Ubuntu system files..."
     if [ ! -e "$eos_sys_archive" ];then
