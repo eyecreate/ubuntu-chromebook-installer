@@ -42,6 +42,11 @@ Usage
 
 On future kernel updates, the script (profiles/devices/acer-c720/scripts/trusty-patch.sh) can be run from the installer folder to update the patches with updated kernels.(to some degree)
 
+Optional
+--------
+If you want the Search key to function as Caps Lock, look at the keybind config listed here:
+https://github.com/eyecreate/ubuntu-chromebook-installer/issues/18
+
 Credit(s)
 ---------
 
